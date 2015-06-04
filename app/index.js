@@ -10,6 +10,28 @@ var users = require('../routes/users');
 
 var app = express();
 
+// XXX: This probably needs to be isolated...
+
+var objectdb = require('objectdb')('corvid.db');
+var userdb = require('userdb')(objectdb);
+
+var makeLineParser = require('parser/line');
+var makeLoginParser = require('parser/login');
+
+var parserFactory = function (session) {
+  return makeLineParser(makeLoginParser(session, userdb));
+};
+
+var sessionFactory = function (stream) {
+  return require('session')(stream, parserFactory, objectdb);
+};
+
+var telnetUI = require('telnet-ui');
+var telnetServer = telnetUI.create(sessionFactory);
+
+
+
+
 // view engine setup
 app.set('views', path.join(__dirname, '..', 'views'));
 app.set('view engine', 'jade');
@@ -54,6 +76,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;
