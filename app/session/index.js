@@ -2,13 +2,9 @@ module.exports = CORVIDSession;
 
 function CORVIDSession(stream, parserFactory) {
   if (!(this instanceof CORVIDSession)) {
-    return new CORVIDSession(stream, parser);
+    return new CORVIDSession(stream, parserFactory);
 
-  var newline = '\n';
-
-  stream.on('data', this.data);
-
-  var parser;
+  var newline = '\n', parser;
 }
 
 CORVIDSession.prototype = {
@@ -30,7 +26,8 @@ CORVIDSession.prototype = {
 
   connected: function () {
     this.writeLines("", "Welcome to CORVID!", "");
-    parser = parserFactory(this, stream);
+    parser = parserFactory(this);
+    stream.on('data', this.data);
   }
 };
 
