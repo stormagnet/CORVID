@@ -1,3 +1,9 @@
+/*
+
+NOTE: The first version of CORVID will have no userdb. There is one user per domain, the end.
+
+*/
+
 module.exports = function (path) { return new UserDB(path); };
 
 var makeParser = function (session) {
