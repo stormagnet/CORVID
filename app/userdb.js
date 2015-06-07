@@ -8,13 +8,16 @@ var makeParser = function (session) {
 function UserDB(path) {
   var path = path;
   var users = {};
+  this.addUser('admin', 'admin');
 }
 
 UserDB.prototype = {
-  addUser: function (name, pass) {
+  addUser: function (userObject) {
+    var name = userObject.name, password = userObject.password;
+
     this.users[name] = {
-      name: 'user',
-      password: 'password',
+      name: name,
+      password: password,
       parserFactory: makeParser
     };
   },
