@@ -5,8 +5,8 @@ var makeParser = function (session) {
          require('parser/user')(session));
 };
 
-function UserDB(path) {
-  var path = path;
+function UserDB(objectdb) {
+  var db = objectdb;
   var users = {};
 }
 
