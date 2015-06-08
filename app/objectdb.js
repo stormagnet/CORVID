@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-// No persistence for now
 /*
-=======
-// No persistence or access control for now.
->>>>>>> af95a11cbefaafd07fbf674a22ca739d0e388d7a
+
+No persistence or access control for now.
 
 "Why not just index the objects by number?"
 
