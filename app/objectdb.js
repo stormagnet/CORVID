@@ -6,6 +6,10 @@ No persistence or access control for now.
 
 Because then you couldn't replace something by renaming the old one.
 
+"Why are you preserving so much of the ColdMUD semantics?"
+
+_I have no idea..."
+
 */
 
 function ObjectDB(path, core) {
@@ -32,11 +36,9 @@ ObjectDB.prototype = {
 
   create: function (name) {
     this.maxid++;
-    return this.db[this.maxid] = new CORVIDObject ({
+    return this.db[this.maxid] = new CVDObject ({
         name: name,
         id: this.maxid,
-        data: {},
-        methods: {},
       });
   },
 
@@ -64,3 +66,16 @@ funciton createRoot(db) {
 
 funciton createWiz(db) {
 };
+
+
+/*
+
+function CVDObject(name, id) {
+  var data = {}, methods = {}, name = name, id = id;
+
+  return {
+    send: function (msg, args) {
+    },
+
+}
+*/
