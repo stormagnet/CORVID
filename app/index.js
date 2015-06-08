@@ -13,13 +13,18 @@ var app = express();
 // XXX: This probably needs to be isolated...
 
 var objectdb = require('objectdb')('corvid.db');
-var userdb = require('userdb')(objectdb);
 
-var makeLineParser = require('parser/line');
-var makeLoginParser = require('parser/login');
+// Object 2 being the 'root user' is a hold-over from MOO.
+var userObject = objectdb.get(2);
+
+var lineParserFactory = require('parser/line');
+var userParserFactory = require('parser/user');
 
 var parserFactory = function (session) {
-  return makeLineParser(makeLoginParser(session, userdb));
+  return lineParserFactory(userParserFactory(
+        { session: session,
+          userObject: userObject,
+        }));
 };
 
 var sessionFactory = function (stream) {
