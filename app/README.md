@@ -4,11 +4,11 @@ Yeah, sorry, I needed to "think out loud" and this was the best option for me.
 
 # ObjectDB interface
 
-    var db = require('objectdb')(dbLayerList);
+    var db = require('objectdb')([worldGen], path);
 
-Creates a minimal db ($sys, $root, $wiz), then loads each supplied layer. Each
-element of dbLayerList is a path to a directory following the serialized db
-protocol to be defined next...
+Creates a minimal db ($sys, $root, $wiz), then loads everything in the specified path on top of that.
+
+It is an error if worldGen is provided and path exists. Otherwise worldGen is a directory containing DBLayerLibraries to be used to create a new world at 'path'.
 
 # Serialized DB protocol
 
@@ -41,12 +41,7 @@ Which uses require() to load path/platonics and path/world-gen.
 
 ## World state
 
-A stored world captures the results of everything that has happened to it
-since it came into being. A world includes a log of all of the events which
-created it, but some of the results of those events will be missing in the
-latest stored version in cases where a later event obviates an earlier one.
-Fill a bucket, empty a bucket, the 'full' version of the bucket only exists in
-the memories of those who experienced and cared to remember it.
+A stored world captures the results of everything that has happened to it since it came into being. A world includes a log of all of the events which created it, but some of the results of those events will be missing in the latest stored version in cases where a later event obviates an earlier one.  Fill a bucket, empty a bucket, the 'full' version of the bucket only exists in the memories of those who experienced and cared to remember it.
 
 ### Format
 
