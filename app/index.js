@@ -15,7 +15,7 @@ var app = express();
 
 // XXX: This probably needs to be isolated...
 
-var objectdb = require('objectdb')('corvid.db');
+var objectdb = require('cvd-db')('corvid.db');
 
 // Object 2 being the 'root user' is a hold-over from MOO.
 var userObject = objectdb.get(2);

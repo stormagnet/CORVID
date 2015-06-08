@@ -28,6 +28,16 @@ Non-platonic state is captured in Observations as described in the wiki.
 ### On-disk format of libraries
 
  * platonics/
+   * files and subdirectories treated identically to Node.js modules
+   * index.js manages connections between objects with interdependencies
+ * world-gen/
+   * Another Node.js module
+
+Loading libraries looks like
+
+    var someLib = DBLayerLibary(path);
+
+Which uses require() to load path/platonics and path/world-gen.
 
 ## World state
 
