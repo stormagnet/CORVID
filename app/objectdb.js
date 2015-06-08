@@ -16,15 +16,9 @@ function ObjectDB(path, core) {
     return new ObjectDB(path);
 
   this.db = {};
-<<<<<<< HEAD
-  this.nameToId = {};
-  this.nextid = 0;
-  this.init(core);
-=======
   this.maxid = 0;
   this.initMinimal();
   // this.loadCore(path)
->>>>>>> af95a11cbefaafd07fbf674a22ca739d0e388d7a
 }
 
 module.exports = ObjectDB;
@@ -39,16 +33,6 @@ ObjectDB.prototype = {
 
   get: function (id) { return this.db[id] },
 
-<<<<<<< HEAD
-  create: function (name, data) {
-    data.name = name;
-    data.id = this.nextid;
-
-    this.db[this.nextid] = data;
-    this.names[name] = this.nextid;
-
-    this.nextid++;
-=======
   create: function (name) {
     this.maxid++;
     return this.db[this.maxid] = new CORVIDObject ({
@@ -57,7 +41,6 @@ ObjectDB.prototype = {
         data: {},
         methods: {},
       });
->>>>>>> af95a11cbefaafd07fbf674a22ca739d0e388d7a
   },
 
   destroy: function (id) {
@@ -72,8 +55,6 @@ ObjectDB.prototype = {
   },
 };
 
-<<<<<<< HEAD
-=======
 // Private functions below
 
 function createSys(db) {
@@ -86,4 +67,3 @@ funciton createRoot(db) {
 
 funciton createWiz(db) {
 };
->>>>>>> af95a11cbefaafd07fbf674a22ca739d0e388d7a
