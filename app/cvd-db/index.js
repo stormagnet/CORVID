@@ -8,7 +8,7 @@ Because then you couldn't replace something by renaming the old one.
 
 "Why are you preserving so much of the ColdMUD semantics?"
 
-_I have no idea..."
+_"I have no idea..."_
 
 */
 
@@ -16,22 +16,21 @@ function ObjectDB(path, core) {
   if (!(this instanceof ObjectDB))
     return new ObjectDB(path);
 
+  // EngineID -> EngineObject
   this.db = {};
-  this.maxid = 0;
-  this.initMinimal();
-  // this.loadCore(path)
+
+  // Number of last object added to DB
+  this.maxid = -1;
+
+  // Bootstrapping framework
+  initMinimal(this);
+
+  // this.initWorld(path, core)
 }
 
 module.exports = ObjectDB;
 
 ObjectDB.prototype = {
-  initMinimal: function () {
-    createSys(this);
-    createRoot(this);
-    createWiz(this);
-  },
-
-
   get: function (id) { return this.db[id] },
 
   create: function (name) {
@@ -50,32 +49,23 @@ ObjectDB.prototype = {
     this.db[id] = undefined;
   },
 
-  init: function (core) {
+  init: function (path) {
+    var worldGen;
+
+    if (arguments.length > 1) {
+      worldGen = path;
+      path = arguments[1];
+      genWorld(this, worldGen, path);
+    } else {
+
+    }
   },
 };
 
 // Private functions below
 
-function createSys(db) {
-  var sys = db.create('sys');
-  sys.
+function initMinimal (db) {
+  ['sys', 'root', 'user'].forEach(function (name) {
+    require('engine/' + name)(db);
+  });
 };
-
-funciton createRoot(db) {
-};
-
-funciton createWiz(db) {
-};
-
-
-/*
-
-function CVDObject(name, id) {
-  var data = {}, methods = {}, name = name, id = id;
-
-  return {
-    send: function (msg, args) {
-    },
-
-}
-*/
