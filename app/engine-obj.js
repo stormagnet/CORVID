@@ -17,9 +17,20 @@ module.exports = function EngineObject (db, id) {
 
   // Yes, I know, multiple inheritance is 'dead'. Whatever. Pplplpltttt!
   this.parents = [];
+
+  // Core interface
+  this.localProxy = undefined;
+
+  this.context = new Context();
 };
 
 EngineObject.prototype = {
+  query: function (constraints) {
+    var observer, context, subject, relation, object, degree;
+  },
+
+  proxy: function () {},
+
   send: function (msg, vargs) {
     var method = this.lookupMethod(msg), 
         args = Array.prototype.slice.call(arguments).slice(1);
@@ -87,3 +98,18 @@ function wrapMethod (code, argNames) {
 
   return eval(fullCode);
 }
+
+function Context() {
+  this.relations = {
+    all = [],
+    byObserverId = {},
+    bySubjectId = {},
+    byObjectId = {},
+
+    byDegreeFilter = function (filter) {},
+    byContextFilter = function (filter) {},
+  };
+}
+
+Context.prototype = {
+};

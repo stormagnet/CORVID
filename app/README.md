@@ -2,6 +2,23 @@
 
 Yeah, sorry, I needed to "think out loud" and this was the best option for me.
 
+# EngineObject
+
+Something that is persisted, has parents, data and methods.
+
+## Methods
+
+* .query(constraints)
+
+# CoreObject
+
+A CoreObject is a proxy to either a local or remote EngineObject.
+
+## Methods
+
+* .receiveEvent(event)
+* .query(constraints)
+
 # ObjectDB interface
 
     var db = require('objectdb')([worldGen], path);
