@@ -1,22 +1,25 @@
 module.exports = makeUserParser;
 
-function makeUserParser(session, next, commands) {
+function makeUserParser(session, db) {
+  var next = db.user.commandHandler;
+
   session.prompt = '\n> ';
 
-  next = next || session.user.doCommand;
-
   return function (line) {
-    var idx = line.indexOf(' ');
-    var cmd = line;
-    
-    if (idx) {
-      cmd = line.slice(0, idx);
-      line = line.slice(idx + 1);
-    }
+    return (function () {
+      var idx, cmd = line;
 
-    if (commands[cmd]) {
-      next = next(commands[cmd], line) || next;
-    }
+      if (idx = line.indexOf(' ')) {
+        cmd = line.slice(0, idx);
+        line = line.slice(idx + 1);
+      }
+
+      if (commands[cmd]) {
+        next = next(commands[cmd], line) || next;
+      } else {
+        session.writeLine("Unknown command '{}'".replace('{}', cmd));
+      }
+    })();
   };
 }
     

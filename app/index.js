@@ -17,16 +17,13 @@ var app = express();
 
 var objectdb = require('cvd-db')('corvid.db');
 
-// Object 2 being the 'root user' is a hold-over from MOO.
-var userObject = objectdb.get(2);
-
 var lineParserFactory = require('parser/line');
 var userParserFactory = require('parser/user');
 
 var parserFactory = function (session) {
   return lineParserFactory(userParserFactory(
         { session: session,
-          userObject: userObject,
+          db: objectdb,
         }));
 };
 
