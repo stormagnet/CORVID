@@ -1,12 +1,12 @@
 // Wrapper for objects as seen by engines.
 
-module.exports = function EngineObject (db, name, id) {
+module.exports = function EngineObject (db, id) {
   if (!(this isinstanceof EngineObject))
-    return new EngineObject(db, name, id);
+    return new EngineObject(db, id);
 
   // for db.lookup(name), db.get(id), etc
   this.db = db;
-  this.name = name;
+  this.names = [];
   this.id = id;
 
   // Actual code. Name anticipates method cache (sigh)
@@ -14,18 +14,52 @@ module.exports = function EngineObject (db, name, id) {
 
   // Instance data
   this.data = {};
+
+  // Yes, I know, multiple inheritance is 'dead'. Whatever. Pplplpltttt!
+  this.parents = [];
 };
 
 EngineObject.prototype = {
-  send: function (msg, args) { return this.methods[msg].apply(this, args) },
+  send: function (msg, vargs) {
+    var method = this.lookupMethod(msg), 
+        args = Array.prototype.slice.call(arguments).slice(1);
 
-  get: function (context, name) { return this.data[context][name] },
+    return method.apply(this, args);
+  },
 
-  set: function (context, name, value) { this.data[context][name] = value; return this },
+  getVar: function (context, name) {
+    return this.data[context][name];
+  },
 
-  setMethod: function (name, fn) { this.ownMethods[name] = fn },
+  setVar: function (context, name, value) {
+    this.data[context][name] = value;
 
-  compile: function (name, argNames, code) { this.setMethod(name, wrapMethod(code, argNames)) },
+    return this;
+  },
+
+  lookupMethod: function (msg) {
+    var p, m;
+
+    if (m = this.ownMethods[msg])
+      return m;
+
+    for (p = 0; p < this.parents.length; p++) {
+      try {
+        if (m = this.parents[p].lookupMethod(msg))
+          return m;
+      }
+    }
+
+    throw "Method not found";
+  },
+
+  setMethod: function (methodName, fn) {
+    this.ownMethods[methodName] = fn;
+  },
+
+  compile: function (methodName, argNames, code) {
+    this.setMethod(methodName, wrapMethod(code, argNames));
+  },
 };
 
 /*

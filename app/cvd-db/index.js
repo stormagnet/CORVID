@@ -38,11 +38,16 @@ module.exports = function ObjectDB(worldGen, path) {
 ObjectDB.prototype = {
   get: function (id) { return this.db[id] },
 
-  lookup: function (name) { return this.names[name] },
+  lookup: function (name) {
+    if (!this.names[name])
+      throw "Object name not found";
 
-  create: function (name) {
+    return this.names[name] 
+  },
+
+  create: function () {
     var id = this.db.length;
-    var o = new EngineObject(this, name, id);
+    var o = new EngineObject(this, id);
 
     this.db.push(o);
 
@@ -56,15 +61,24 @@ ObjectDB.prototype = {
     // Deleting hash elements is contra-indicated for performance reasons.
     this.db[id] = undefined;
   },
+
+  addName: function (o, name) {
+    if (this.names[name])
+      throw "Name already in use";
+
+    this.names[name] = o;
+  },
+
+  delName: function (name) {
+    if (!this.names[name])
+      throw "Name not found";
+
+    this.names[name] = undefined;
+  },
 };
 
 // Private functions below
 
 function initMinimal (db) {
-  ['sys', 'root', 'user'].forEach(function (name) {
-    var o = db.create(name);
-    o.db = db;
-
-    require('engine/' + name)(o);
-  });
+  require('minimal-db')(db);
 };
