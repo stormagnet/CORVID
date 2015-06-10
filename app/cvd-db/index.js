@@ -12,33 +12,39 @@ _"I have no idea..."_
 
 */
 
-function ObjectDB(path, core) {
+module.exports = function ObjectDB(worldGen, path) {
   if (!(this instanceof ObjectDB))
-    return new ObjectDB(path);
+    return new ObjectDB(worldGen, path);
+
+  if (!path) {
+    path = worldGen;
+    worldGen = undefined;
+  }
 
   // EngineID -> EngineObject
-  this.db = {};
+  this.db = [];
 
-  // Number of last object added to DB
-  this.maxid = -1;
+  // lookup by name
+  this.names = {};
 
   // Bootstrapping framework
   initMinimal(this);
 
-  // this.initWorld(path, core)
+  // this.initWorld(path, worldGen)
 }
-
-module.exports = ObjectDB;
 
 ObjectDB.prototype = {
   get: function (id) { return this.db[id] },
 
+  lookup: function (name) { return this.names[name] },
+
   create: function (name) {
-    this.maxid++;
-    return this.db[this.maxid] = new CVDObject ({
-        name: name,
-        id: this.maxid,
-      });
+    var id = this.db.length;
+    var o = new EngineObject (this, name, id);
+
+    this.db.push(o);
+
+    return o;
   },
 
   destroy: function (id) {
@@ -47,18 +53,6 @@ ObjectDB.prototype = {
 
     // Deleting hash elements is contra-indicated for performance reasons.
     this.db[id] = undefined;
-  },
-
-  init: function (path) {
-    var worldGen;
-
-    if (arguments.length > 1) {
-      worldGen = path;
-      path = arguments[1];
-      genWorld(this, worldGen, path);
-    } else {
-
-    }
   },
 };
 

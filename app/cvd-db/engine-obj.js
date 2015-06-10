@@ -6,6 +6,8 @@ module.exports = function EngineObject (db, name, id) {
 
   // for db.lookup(name), db.get(id), etc
   this.db = db;
+  this.name = name;
+  this.id = id;
 
   // Actual code. Name anticipates method cache (sigh)
   this.ownMethods = {};
@@ -25,6 +27,26 @@ EngineObject.prototype = {
 
   compile: function (name, argNames, code) { this.setMethod(name, wrapMethod(code, argNames)) },
 };
+
+/*
+
+To compile 'arg x, y; return this[x]() + this[y]()', wrap it like...
+
+  return (function () {
+    return function (x, y) {
+      // the code goes here
+    }
+  })();
+
+*/
+
+function header(argNames) {
+  var argList = argNames.join(", ");
+
+  return "return (function () { return function (" + argList + ") {";
+}
+
+var footer = "}})();";
 
 function wrapMethod (code, argNames) {
   var fullCode = header(argNames) + code + footer;

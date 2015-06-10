@@ -21,10 +21,7 @@ var lineParserFactory = require('parser/line');
 var userParserFactory = require('parser/user');
 
 var parserFactory = function (session) {
-  return lineParserFactory(userParserFactory(
-        { session: session,
-          db: objectdb,
-        }));
+  return lineParserFactory(userParserFactory(session, objectdb));
 };
 
 var sessionFactory = function (stream) {
