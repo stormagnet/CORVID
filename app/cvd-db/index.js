@@ -12,6 +12,8 @@ _"I have no idea..."_
 
 */
 
+var EngineObject = require('engine-obj');
+
 module.exports = function ObjectDB(worldGen, path) {
   if (!(this instanceof ObjectDB))
     return new ObjectDB(worldGen, path);
@@ -40,7 +42,7 @@ ObjectDB.prototype = {
 
   create: function (name) {
     var id = this.db.length;
-    var o = new EngineObject (this, name, id);
+    var o = new EngineObject(this, name, id);
 
     this.db.push(o);
 
@@ -60,6 +62,9 @@ ObjectDB.prototype = {
 
 function initMinimal (db) {
   ['sys', 'root', 'user'].forEach(function (name) {
-    require('engine/' + name)(db);
+    var o = db.create(name);
+    o.db = db;
+
+    require('engine/' + name)(o);
   });
 };
