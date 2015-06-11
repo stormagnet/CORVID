@@ -21,18 +21,16 @@ module.exports = function EngineObject (db, id) {
   // Core interface
   this.localProxy = undefined;
 
-  this.context = new Context();
+  this.context = new Context(this);
 };
 
 EngineObject.prototype = {
-  query: function (constraints) {
-    var observer, context, subject, relation, object, degree;
-  },
+  query: this.context.query,
 
   proxy: function () {},
 
   send: function (msg, vargs) {
-    var method = this.lookupMethod(msg), 
+    var method = this.lookupMethod(msg),
         args = Array.prototype.slice.call(arguments).slice(1);
 
     return method.apply(this, args);
@@ -99,9 +97,12 @@ function wrapMethod (code, argNames) {
   return eval(fullCode);
 }
 
-function Context() {
+function Context(entity) {
+  this.entity = entity;
+
   this.relations = {
     all = [],
+
     byObserverId = {},
     bySubjectId = {},
     byObjectId = {},
@@ -112,4 +113,18 @@ function Context() {
 }
 
 Context.prototype = {
+  now: function () {},
+
+  simpleQuery: function (constraints) {
+    var candidates =
+      ['observer', 'subject', 'object', 'relation'].find(function (aspect) {
+        if (constraints[aspect]) {
+          return this.queries[aspect](constraints);
+        }
+      };
+
+    if (candidates) {
+      return this.filter(candidates, constraints);
+    }
+  },
 };
