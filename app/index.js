@@ -29,8 +29,7 @@ var sessionFactory = function (stream) {
 };
 
 var telnetUI = require('telnet-ui');
-var telnetServer = telnetUI(sessionFactory);
-
+var telnetServer = telnetUI(sessionFactory).listen(3023);
 
 
 
