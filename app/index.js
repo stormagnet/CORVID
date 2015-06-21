@@ -1,3 +1,6 @@
+/*jslint node: true */
+'use strict';
+
 var express = require('express');
 var path = require('path');
 var favicon = require('static-favicon');
@@ -21,11 +24,14 @@ var lineParserFactory = require('parser/line');
 var userParserFactory = require('parser/user');
 
 var parserFactory = function (session) {
-  return lineParserFactory(userParserFactory(session, objectdb));
+  var userParser = userParserFactory(session, objectdb)
+  var lineParser = lineParserFactory(userParser);
+
+  return lineParser;
 };
 
 var sessionFactory = function (stream) {
-  return require('session')(stream, parserFactory, objectdb);
+  return require('session')(stream, parserFactory);
 };
 
 var telnetUI = require('telnet-ui');

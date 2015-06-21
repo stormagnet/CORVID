@@ -1,9 +1,17 @@
 #!/usr/bin/env node
+/*jslint node: true */
+'use strict';
+
 var debug = require('debug')('CORVID');
 var app = require('../app');
 
 app.set('port', process.env.PORT || 3000);
+app.on('listen', function() {
+    debug('Express server listening on port ' + server.address().port);
+  });
 
-var server = app.listen(app.get('port'), function() {
-  debug('Express server listening on port ' + server.address().port);
-});
+var server = app.listen(app.get('port'));
+
+console.log('Server probably started?');
+
+// vim: syntax=JavaScript
