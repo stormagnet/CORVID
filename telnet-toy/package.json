@@ -1,0 +1,14 @@
+{
+  "name": "telnet-toy",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/run",
+    "build": "cake build",
+    "test": "cake test"
+  },
+  "dependencies": {
+    "debug": "~0.7.4",
+    "telnet": "0.0.1"
+  }
+}

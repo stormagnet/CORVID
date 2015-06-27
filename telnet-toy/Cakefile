@@ -1,0 +1,35 @@
+fs = require('fs')
+childProcess = require('child_process')
+
+option '-i', '--input', 'Source directory'
+option '-o', '--output', 'Destination directory'
+
+copy = (from, to, children) ->
+  child = childProcess.spawn 'cp', [fullPath, "#{dst}/#{fileName}"]
+  child.on 'disconnect', ->
+  children.push
+
+task 'build', '', (options) ->
+  src = options["input"] or 'src'
+  dst = options["output"] or 'dst'
+  children = []
+
+  fs.readdir src, (e, files) ->
+    files.forEach (fileName) ->
+      if e
+        throw "Error reading #{src}: #{e.toString()}"
+
+      fullPath = "#{src}/#{fileName}"
+
+      switch
+        when fileName.match /\.js$/
+          return children.push childProcess.spawn 'cp', [fullPath, "#{dst}/#{fileName}"]
+        when fileName.match /\.coffee/
+          return children.push childProcess.spawn 'coffee', ['-c', '-o', dst, fullPath ]
+        else console.log "Ignoring unrecognized file '#{fullPath}'"
+
+    while children
+      children.delete i for child, i in children when !child.connected
+
+
+    console.log "Done"
