@@ -1,0 +1,57 @@
+/* vi: syntax=css
+*/
+
+body {
+  font-family: sans-serif;
+}
+
+.titleBar {
+  background-color: #EEF;
+  text-align: center;
+  font-size: 200%;
+  height: 3em;
+}
+
+.titleBar * {
+  vertical-align: middle;
+}
+
+.menu {
+  width: 15em;
+  position: relative;
+  bottom: 1px;
+}
+
+.menu > ul {
+  border: solid black 1px;
+}
+
+.content {
+  border: solid black 1px;
+  overflow: scroll;
+}
+
+.all {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 5px;
+
+  border: solid green 3px;
+}
+
+.leftMenu {
+  float: left;
+  background-color: #EFE;
+}
+
+.rightMenu {
+  float: right;
+  display: none;
+}
+
+.nonTitle {
+  border: none;
+  height: 89%;
+}
