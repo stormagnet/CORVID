@@ -16,6 +16,7 @@
     "telnet": "0.0.1"
   },
   "devDependencies": {
-    "jumly": "^0.2.1"
+    "jumly": "^0.2.1",
+    "mocha": "^2.2.5"
   }
 }
