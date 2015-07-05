@@ -3,10 +3,13 @@ should = require 'should'
 
 describe 'Command', ->
   describe '#match', ->
-    cmd = new Command
-      pattern: 'some-command'
-      intent: true
+    cmd = new Command 'some-command', -> true
     it 'should return something false on failed match', ->
-      should not cmd.match 'wrong'
+      result = cmd.match 'wrong'
+      should(result).not.be.ok()
+    it 'should return something true on full match', ->
+      result = cmd.match 'some-command'
+      should(result).be.ok()
     it 'should return something true on partial match', ->
-      should     cmd.match 'some'
+      result = cmd.match 's'
+      should(result).be.ok()
