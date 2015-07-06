@@ -8,7 +8,8 @@ module.exports = class CorvidDB
 
   create: (name) ->
     o = new EngineObj this, @db.length
-    @addName name, o
+    @addName name, o if name
+    o
 
   addName: (name, obj) ->
     if @o[name]

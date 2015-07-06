@@ -14,7 +14,7 @@ loader = (db, next) ->
       a < b
 
     for file in files when not file is 'index.coffee'
-      (require file)(db) 
+      (require file)(db)
 
     next()
 
