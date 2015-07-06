@@ -3,7 +3,6 @@ path = require 'path'
 
 loader = (db, next) ->
   here = path.dirname module.filename
-  console.log fs.readdir
 
   fs.readdir here, (e, files) ->
     files.sort (a, b) ->
