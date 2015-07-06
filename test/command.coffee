@@ -1,5 +1,5 @@
-Command = require '../src/command.coffee'
 should = require 'should'
+Command = require '../src/command.coffee'
 
 describe 'Command', ->
   describe '#match', ->

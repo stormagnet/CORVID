@@ -1,12 +1,27 @@
-module.exports = CorvidDB
+EngineObj = require './engine-obj.coffee'
 
-EngineObj = require 'engine-obj'
-
-class CorvidDB
+module.exports = class CorvidDB
   constructor: (next) ->
     @db = []
     @o = {}
     initMinimal this, next || -> true
-    
+
+  create: (name) ->
+    o = new EngineObj this, @db.length
+    @addName name, o
+
+  addName: (name, obj) ->
+    if @o[name]
+      throw new Error 'Name already in use'
+
+    @o[name] = obj
+    obj.names.push name
+
+  destroy: (o) ->
+    if o instanceOf EngineObj
+      @destroy o.id
+
+    @db[o] = undefined
+
 initMinimal = (db, next) ->
-  (require 'db/minimal')(db, next)
+  (require './db/minimal')(db, next)

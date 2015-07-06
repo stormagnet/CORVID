@@ -8,8 +8,6 @@ class Command
     cmd = words[0]
     prefix = @pattern.slice(0, cmd.length)
 
-    console.log cmd, prefix
-
     if cmd is prefix
       return cmd.length
 
