@@ -1,2 +1,3 @@
 module.exports = (db) ->
-  o = db.create 'sys'
+  db.user = o = db.create 'wiz'
+  o.parser = (data) ->

@@ -1,2 +1,2 @@
 module.exports = (db) ->
-  o = db.create 'sys'
+  o = db.create 'root'
