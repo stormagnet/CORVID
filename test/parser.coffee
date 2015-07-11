@@ -32,7 +32,6 @@ describe 'LineParser', ->
     parser.data 'line1\nline2\nline3'
 
     lines.length.should.equal 2
-    console.log JSON.stringify parser
     parser.buffer.length.should.equal 5
 
  
