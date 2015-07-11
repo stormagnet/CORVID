@@ -4,7 +4,7 @@
   "description": "trying out stuff from http://www.marcusoft.net/2015/03/node-with-coffeescript---not-a-piece-of-cake.html",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_PATH=../src mocha -w --compilers coffee:coffee-script/register",
+    "test": "NODE_PATH=../src mocha -u exports -w --compilers coffee:coffee-script/register",
     "start": "mkdir -p dist;(coffee --compile -o dist --watch src &);./node_modules/nodemon/bin/nodemon.js ./dist/index.js",
     "clean": "rm -rf dist"
   },
