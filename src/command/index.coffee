@@ -1,5 +1,10 @@
 class Command
-  constructor: (@pattern, @intent) ->
+  constructor: (@actor) ->
+
+  do: (input) ->
+    @actor
+      action: @name
+      parameters: @extractParams input
 
   match: (input) ->
     return 0 unless input

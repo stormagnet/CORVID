@@ -25,4 +25,4 @@ module.exports = class CorvidDB
     @db[obj] = undefined
 
 initMinimal = (db) ->
-  (require './db/minimal')(db)
+  (require './minimal')(db)
