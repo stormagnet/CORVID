@@ -1,17 +1,12 @@
 fs = require 'fs'
 path = require 'path'
 
-source = /\.coffee$/
+sourcePattern = /^[^.].*\.coffee$/
 
 loader = (db) ->
   here = path.dirname module.filename
 
-  files = fs.readdirSync here
-
-  files = files.filter (f) ->
-    return false unless f.match source
-    return false if f is 'index.coffee'
-    true
+  files = fs.readdirSync path.join here, 'o'
 
   files.sort (a, b) ->
     for o in ['sys', 'root', 'wiz']
@@ -20,7 +15,7 @@ loader = (db) ->
     a < b
 
   for file in files
-    fullpath = path.join here, file
-    (require fullpath) db
+    modulePath = path.join 'db', 'minimal', 'o', file
+    (require modulePath) db
 
 module.exports = loader

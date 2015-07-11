@@ -1,6 +1,6 @@
 should = require 'should'
-CorvidDB = require '../src/db.coffee'
-EngineObj = require '../src/engine-obj.coffee'
+CorvidDB = require 'db'
+EngineObj = require 'engine-obj'
 
 db = new CorvidDB console.log
 

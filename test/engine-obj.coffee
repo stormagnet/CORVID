@@ -2,8 +2,8 @@ should = require 'should'
 
 describe 'EngineObj', ->
   describe '#new', ->
-    EngineObj = require '../src/engine-obj.coffee'
-    CorvidDB = require '../src/db.coffee'
+    EngineObj = require 'engine-obj'
+    CorvidDB = require 'db'
     return
     db = new CorvidDB
     o = db.create()

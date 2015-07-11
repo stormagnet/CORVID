@@ -1,5 +1,5 @@
 should = require 'should'
-LineParser = require '../src/line-parser.coffee'
+LineParser = require 'line-parser'
 
 describe 'LineParser', ->
   it 'should buffer incomplete lines', ->

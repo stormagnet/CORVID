@@ -1,4 +1,4 @@
-EngineObj = require './engine-obj.coffee'
+EngineObj = require 'engine-obj'
 
 module.exports = class CorvidDB
   constructor: ->
