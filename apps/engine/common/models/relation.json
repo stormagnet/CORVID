@@ -1,0 +1,28 @@
+{
+  "name": "relation",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "object": {
+      "type": "number"
+    },
+    "relationType": {
+      "type": "number"
+    },
+    "subject": {
+      "type": "number"
+    },
+    "parameters": {
+      "type": "string",
+      "comments": "JSON encoded dict until further notice"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
