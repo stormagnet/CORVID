@@ -34,7 +34,33 @@ write = (l) -> process.stdout.write l
 writeln = (l) -> write l + '\n'
 writeLines = (lines...) -> writeln lines.join '\n'
 
+# Prepend prefix and insert prefix after newlines
+String.prototype.indent = (prefix = '  ') ->
+  prefix + this
+    .split '\n'
+    .join '\n' + prefix
+
 commands =
+  help:
+    help: "You're soaking in it!"
+    invoke: (input, cmdStr, argStr) ->
+      if argStr
+        return write "There is no help for '#{argStr}'.\n ...yet.\n"
+
+      cmdHelp = []
+
+      for cmdStr, cmd of commands
+        helpText = switch typeof cmd.help
+          when 'function' then cmd.help()
+          when 'string' then cmdStr + ": " + cmd.help
+          else cmdStr + " (no help available)"
+        cmdHelp.push helpText.indent()
+
+      writeLines "You are currently in the CORVID debug console.",
+          ""
+          "Available commands:"
+          cmdHelp...
+
   repl:
     help: "Drop into JavaScript console (good luck!)"
     invoke: (input, cmdStr, argStr) ->
@@ -48,28 +74,33 @@ commands =
           write "\n\nReturning from JavaScript REPL.\n"
           rl = startReadLine()
 
-  help:
-    help: "You're soaking in it!"
-    invoke: (input, cmdStr, argStr) ->
-      if argStr
-        return write "There is no help for '#{argStr}'.\n ...yet.\n"
-
-      cmdHelp = []
-
-      for cmdStr, cmd of commands
-        cmdHelp.push "  " + switch typeof cmd.help
-          when 'function' then cmd.help()
-          when 'string' then cmdStr + ": " + cmd.help
-          else cmdStr + " (no help available)"
-
-      writeLines "Commands known:", cmdHelp...
-
   exit:
     help: "For when it's all just _too much_"
-    invoke: ->
+    invoke: (input, cmdStr, argStr) ->
       rl.close()
       writeln 'Have a great day!'
       process.exit 0
+
+  engine:
+    help: """
+      Dispatch a request to the CORVID engine (not yet implemented).
+
+        engine help [query]
+        engine list [pattern]
+        engine inspect targetPattern
+        engine create [name]
+        engine set target.prop value
+        engine delete target[.prop]
+
+    """
+    invoke: (input, cmdStr, argStr) ->
+      [engineCmd, args] = argStr.trim().split /\s+/
+      engine.send engineCmd, args, resultReporter engineCmd, argStr
+
+resultReporter = (cmd, args) ->
+  (err, data) ->
+    writeLines "Results from your engine request: #{engineCmd} #{argStr}",
+      "(...)"
 
 unknownCommand = (cmdstr, line) ->
   write """
