@@ -1,0 +1,23 @@
+{
+  "name": "activeConnection",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "domain": {
+      "type": "string",
+      "required": true
+    },
+    "socket": {
+      "type": "number",
+      "id": false
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

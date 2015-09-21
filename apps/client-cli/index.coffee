@@ -1,6 +1,9 @@
 readline = require 'readline'
 repl = require 'repl'
 
+CorvidEngineClient = require './engine'
+engine = new CorvidEngineClient
+
 handleLine = (line) ->
   matchResult = line.match /^(\s*)(\S+)(\s+)?(.*)/
 
@@ -85,22 +88,43 @@ commands =
     help: """
       Dispatch a request to the CORVID engine (not yet implemented).
 
-        engine help [query]
-        engine list [pattern]
-        engine inspect targetPattern
-        engine create [name]
-        engine set target.prop value
-        engine delete target[.prop]
+        Basics:
+          engine help [query]
+          engine config [name [:|=] [value]]
+          engine install url
+          egnine connect [host [port]]
+
+        Object tools:
+          engine list [pattern]
+          engine inspect targetPattern
+          engine create [name]
+          engine set target.prop value
+          engine delete target[.prop]
+
+        Relation tools:
+          engine relate subject relation object [params]
+
+        Tricks:
+          engine alias from [to]
 
     """
+
     invoke: (input, cmdStr, argStr) ->
-      [engineCmd, args] = argStr.trim().split /\s+/
-      engine.send engineCmd, args, resultReporter engineCmd, argStr
+      [engineCmd, args...] = argStr.trim().split /\s+/
+
+      if fn = commands.engine[engineCmd]
+        fn args, resultReporter engineCmd, args.join " "
+
+    connect: (args, cb) ->
+      engine = new CorvidEngineClient
+
+    list: (pattern, cb) ->
+      engine.list cb
 
 resultReporter = (cmd, args) ->
-  (err, data) ->
-    writeLines "Results from your engine request: #{engineCmd} #{argStr}",
-      "(...)"
+  (data) ->
+    writeLines "Results from your engine request: #{cmd} #{args}",
+      JSON.stringify data
 
 unknownCommand = (cmdstr, line) ->
   write """
