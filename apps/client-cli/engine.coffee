@@ -22,30 +22,19 @@ module.exports = class CorvidEngineClient
     if method is 'GET' and postData
       options.path += '?' + postData
 
-    #console.log """
-    #    client.send
-    #      method: #{options.method}
-    #      path: #{options.path}
-    #      data: #{postData}
-    #  """
-
     if method is 'POST' or method is 'PUT'
       options.headers =
         'Content-Type': 'application/x-www-form-urlencoded'
         'Content-Length': postData.length
 
-    console.log 'options: ', options
-
     request = http.request options, (result) =>
-      console.log 'req status: ' + result.statusCode
-      console.log 'req headers: ' + JSON.stringify result.headers
       fullResponse = ""
       result.setEncoding 'utf8'
       result.on 'data', (chunk) -> fullResponse += chunk
       result.on 'end', -> callback JSON.parse fullResponse
 
     request.on 'error', (e) ->
-      console.log "client.send error: ", e
+      console.log "\n\nclient.send error: ", e
 
     if method is 'POST' or method is 'PUT'
       request.write postData
