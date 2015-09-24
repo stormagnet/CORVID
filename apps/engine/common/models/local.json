@@ -8,15 +8,12 @@
   },
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "comments": "for dev purposes"
     },
     "description": {
       "type": "string",
-      "comments": "purely for dev purposes"
-    },
-    "id": {
-      "type": "number",
-      "id": true
+      "comments": "for dev purposes"
     }
   },
   "validations": [],

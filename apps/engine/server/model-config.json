@@ -64,7 +64,9 @@
   },
   "property": {
     "dataSource": "localMongo",
-    "public": true
+    "public": true,
+    "$promise": {},
+    "$resolved": true
   },
   "config": {
     "dataSource": "localMongo",

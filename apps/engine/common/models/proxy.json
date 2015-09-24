@@ -15,11 +15,9 @@
       "type": "string",
       "required": true
     },
-    "id": {
-      "type": "number",
-      "id": true,
-      "required": true,
-      "index": true
+    "localId": {
+      "type": "string",
+      "required": true
     }
   },
   "validations": [],

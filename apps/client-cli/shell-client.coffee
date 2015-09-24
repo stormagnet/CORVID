@@ -12,6 +12,10 @@ module.exports = class ShellClient
     for cmdName, cmd of @commands
       cmd.invoke = cmd.invoke.bind this
 
+      if cmd.subCommands
+        for subCmdName, subCmd of cmd.subCommands
+          cmd.subCommands[subCmdName] = subCmd.bind this
+
   prompt: 'CORVID> '
 
   setLineHandler: (@prompt, @lineHandler) ->
@@ -122,6 +126,7 @@ module.exports = class ShellClient
 
         @write "Switching to JavaScript REPL. Enter ^D to return to Corvid.\n\n"
         @setLineHandler 'js> ', ->
+        @rl.close()
 
         repl.start 'js> '
           .on 'exit', =>
@@ -168,21 +173,56 @@ module.exports = class ShellClient
 
         [engineCmd, args...] = argStr.trim().split /\s+/
 
-        if fn = @commands.engine[engineCmd]
+        if fn = @commands.engine.subCommands[engineCmd]
           fn args, @resultReporter engineCmd, args.join " "
         else
-          popMode()
+          writeLn "'#{engineCmd}' not recognized"
 
-      connect: (args, cb) ->
-        engine = new CorvidEngineClient
+      subCommands:
+        connect: (args, cb) ->
+          @engine = new CorvidEngineClient
 
-      list: (pattern, cb) ->
-        engine.list cb
+        list: (pattern, cb) ->
+          @engine.list @displayEngineList
+
+        create: (name = "", cb) ->
+          desc = ""
+          @engine.create name, desc, cb
+
+  displayEngineList: (data) ->
+    writeLines @tableFromObjectList data
+
+  leftJustify: (s, w) -> s + " ".repeat w - s.length
+
+  tableFromObjectList: (data, colOrder) ->
+    cols = {}
+
+    for o in data
+      for k, v of o
+        cols[k] = Math.max [cols[k], k, v].map (s) -> s.length
+
+    colOrder ||= Object.getOwnPropertyNames cols
+
+    headers = []
+    dividers = []
+    for c, l of cols
+      headers.push @leftJustify c, l
+      dividers.push "-".repeat l
+
+    table = [headers.join " | ", dividers.join "-+-"]
+    for o in data
+      table.push (
+          for c in colOrder
+            @leftJustify o[c], cols[c]
+        ).join " | "
+
+    table
 
   resultReporter: (cmd, args) ->
     (data) =>
-      @writeLines "Results from your engine request: #{cmd} #{args}",
+      @writeLines "\nResults from your engine request: #{cmd} #{args}",
         JSON.stringify data
+      @rl.prompt()
 
   unknownCommand: (cmdstr, line) ->
     @write """

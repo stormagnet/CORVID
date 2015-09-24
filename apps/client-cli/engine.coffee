@@ -35,6 +35,7 @@ module.exports = class CorvidEngineClient
 
     request.on 'error', (e) ->
       console.log "\n\nclient.send error: ", e
+      callback undefined, e
 
     if method is 'POST' or method is 'PUT'
       request.write postData
@@ -46,3 +47,6 @@ module.exports = class CorvidEngineClient
 
   list: (cb) ->
     @send 'GET', 'locals', false, false, cb
+
+  delete: (id, cb) ->
+    @send 'DELETE', 'locals', id, undefined, cb
