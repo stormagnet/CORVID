@@ -42,6 +42,9 @@ module.exports = class CorvidEngineClient
 
     request.end()
 
+  nameLookup: (name, cb) ->
+    @send 'GET', 'locals', false, "filter=" + querystring.stringify JSON.tostring {where: {name: name}}, cb
+
   create: (name, desc, cb) ->
     @send 'POST', 'locals', false, {name: name, description: desc}, cb
 

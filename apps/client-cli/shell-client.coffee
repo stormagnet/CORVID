@@ -1,6 +1,8 @@
 readline = require 'readline'
 repl = require 'repl'
+
 CorvidEngineClient = require './engine'
+util = require './string-util'
 
 module.exports = class ShellClient
   constructor: ->
@@ -155,15 +157,12 @@ module.exports = class ShellClient
           Object tools:
               engine list [pattern]
             ! engine inspect targetPattern
-            ! engine create [name]
+              engine create [name]
             ! engine set target.prop value
             ! engine delete target[.prop]
 
           Relation tools:
             ! engine relate subject relation object [params]
-
-          Tricks:
-            ! engine alias from [to]
 
       """
 
@@ -183,40 +182,23 @@ module.exports = class ShellClient
           @engine = new CorvidEngineClient
 
         list: (pattern, cb) ->
-          @engine.list @displayEngineList
+          @engine.list @displayEngineList.bind this
 
         create: (name = "", cb) ->
           desc = ""
           @engine.create name, desc, cb
 
+        delete: (selector, cb) ->
+          engine = @engine
+          if selector.id
+            engine.delete id, cb
+          else
+            engine.nameLookup selector.name, (id) ->
+              engine.delete id, cb
+
   displayEngineList: (data) ->
-    writeLines @tableFromObjectList data
-
-  leftJustify: (s, w) -> s + " ".repeat w - s.length
-
-  tableFromObjectList: (data, colOrder) ->
-    cols = {}
-
-    for o in data
-      for k, v of o
-        cols[k] = Math.max [cols[k], k, v].map (s) -> s.length
-
-    colOrder ||= Object.getOwnPropertyNames cols
-
-    headers = []
-    dividers = []
-    for c, l of cols
-      headers.push @leftJustify c, l
-      dividers.push "-".repeat l
-
-    table = [headers.join " | ", dividers.join "-+-"]
-    for o in data
-      table.push (
-          for c in colOrder
-            @leftJustify o[c], cols[c]
-        ).join " | "
-
-    table
+    @writeLines "", (util.tableFromObjectList data, "id name description".split " ")...
+    @rl.prompt()
 
   resultReporter: (cmd, args) ->
     (data) =>

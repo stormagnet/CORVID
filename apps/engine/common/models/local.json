@@ -14,6 +14,10 @@
     "description": {
       "type": "string",
       "comments": "for dev purposes"
+    },
+    "proxyId": {
+      "type": "string",
+      "comments": "if set, 'official' object is tracked by referenced proxy"
     }
   },
   "validations": [],
