@@ -1,55 +1,66 @@
-http = require 'http'
-querystring = require 'querystring'
+rest = require 'rest-js'
 
 module.exports = class CorvidEngineClient
   constructor: (opts = {}) ->
-    @host = opts.host or 'localhost'
-    @port = opts.port or '3000'
-    @apiPath = opts.apiPath or 'api'
+    @api = new rest.Rest "http://#{opts.host or 'localhost'}:#{opts.port or 3000}/#{opts.apiPath or 'api'}",
+             defaultFormat: ''
 
-  send: (method, model, id, data, callback) ->
-    options =
-      hostname: @host
-      port: @port
-      method: method
-      path: "/#{@apiPath}/#{model}"
+  config: (name, val) ->
+    if not name
+      return @api.read '/configs'
 
-    postData = querystring.stringify data
+    data =
+      name: name
+      value: val
 
-    if id
-      options.path += '/' + id
+    if val
+      @api.read '/configs/findOne', filter: where: name: name
+        .then (conf) =>
+          conf.value = val
+          @api.update '/configs/' + conf.id, data: conf
+        .catch =>
+          @api.create '/configs', data: data
+    else
+      @api.read '/configs/findOne', filter: where: name: name
 
-    if method is 'GET' and postData
-      options.path += '?' + postData
+  create: (name, desc) ->
+    @api.create '/locals', data: name: name, description: desc
 
-    if method is 'POST' or method is 'PUT'
-      options.headers =
-        'Content-Type': 'application/x-www-form-urlencoded'
-        'Content-Length': postData.length
+  list: ->
+    @api.read '/locals'
 
-    request = http.request options, (result) =>
-      fullResponse = ""
-      result.setEncoding 'utf8'
-      result.on 'data', (chunk) -> fullResponse += chunk
-      result.on 'end', -> callback JSON.parse fullResponse
+  delete: (id) ->
+    @api.remove '/locals/' + id
 
-    request.on 'error', (e) ->
-      console.log "\n\nclient.send error: ", e
-      callback undefined, e
+  nameLookup: (name) ->
+    @api.read '/locals/findOne', filter: where: name: name
 
-    if method is 'POST' or method is 'PUT'
-      request.write postData
+  reDescribe: (id, desc) ->
+    @api.read '/locals', data: id: id
+      .then (data) =>
+        data.description = desc
+        @api.update '/locals/' + data.id, data: data
 
-    request.end()
+  relate: (subj, relation, obj, params = {}) ->
+    @api.create '/relations', data:
+      subjectId: subj
+      relationType: relation
+      objectId: obj
+      parameters: params
 
-  nameLookup: (name, cb) ->
-    @send 'GET', 'locals', false, "filter=" + querystring.stringify JSON.tostring {where: {name: name}}, cb
+  relationsOf: (id) ->
+    @api.read '/relations', filter: where: subjectId: id
 
-  create: (name, desc, cb) ->
-    @send 'POST', 'locals', false, {name: name, description: desc}, cb
+  props: (id) ->
+    @api.read '/properties', filter: where: localId: id
 
-  list: (cb) ->
-    @send 'GET', 'locals', false, false, cb
-
-  delete: (id, cb) ->
-    @send 'DELETE', 'locals', id, undefined, cb
+  setProp: (id, name, value) ->
+    @api.read '/properties/findOne', filter: where: localId: id, name: name
+      .then (data) =>
+        data.value = value
+        @api.update '/properties/' + data.id, data: data
+      .catch =>
+        @api.create '/properties', data:
+          localId: id
+          name: name
+          value: value

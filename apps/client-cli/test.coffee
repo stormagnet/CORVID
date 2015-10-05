@@ -14,4 +14,3 @@ writeLines = (lines) ->
   process.stdout.write lines.join "\n"
 
 writeLines util.tableFromObjectList data
-#console.log util.tableFromObjectList data

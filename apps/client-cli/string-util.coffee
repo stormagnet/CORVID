@@ -1,5 +1,6 @@
 util = module.exports =
   leftJustify: (s, w) ->
+    s or= ''
     w = Math.max s.length, w
     s + (" ".repeat(w - s.length))
 

@@ -10,6 +10,7 @@ module.exports = class ShellClient
     @startReadLine @prompt, @lineHandler.bind this
     @bindCommands()
 
+  # XXX: I don't like this
   bindCommands: ->
     for cmdName, cmd of @commands
       cmd.invoke = cmd.invoke.bind this
@@ -66,7 +67,11 @@ module.exports = class ShellClient
 
   write: (l) -> process.stdout.write l
   writeln: (l) -> @write l + '\n'
-  writeLines: (lines...) -> @writeln lines.join '\n'
+  writeLines: (lines...) ->
+    if lines.length is 1 and Array.isArray lines[0]
+      @writeln lines[0].join '\n'
+    else
+      @writeln lines.join '\n'
 
 # Prepend prefix and insert prefix after newlines
   indent: (s, prefix = '  ') ->
@@ -157,7 +162,7 @@ module.exports = class ShellClient
           Object tools:
               engine list [pattern]
             ! engine inspect targetPattern
-              engine create [name]
+              engine create [name [description]]
             ! engine set target.prop value
             ! engine delete target[.prop]
 
@@ -173,28 +178,56 @@ module.exports = class ShellClient
         [engineCmd, args...] = argStr.trim().split /\s+/
 
         if fn = @commands.engine.subCommands[engineCmd]
-          fn args, @resultReporter engineCmd, args.join " "
+          fn args
         else
-          writeLn "'#{engineCmd}' not recognized"
+          @writeln "'#{engineCmd}' not recognized"
 
       subCommands:
-        connect: (args, cb) ->
+        config: (name, eq, value) ->
+          if not (eq in [':', '='])
+            value = eq
+
+          @engine.config name, value
+            .then (rec) => @displayEngineList rec
+            .catch (err) =>
+              @writeln "Error setting config: #{err}"
+
+        connect: (args) ->
           @engine = new CorvidEngineClient
 
-        list: (pattern, cb) ->
-          @engine.list @displayEngineList.bind this
+        list: (pattern) ->
+          show = @displayEngineList.bind this
+          @engine.list()
+            .then (list) ->
+              show list
 
-        create: (name = "", cb) ->
-          desc = ""
-          @engine.create name, desc, cb
-
-        delete: (selector, cb) ->
+        show: (name) ->
           engine = @engine
-          if selector.id
-            engine.delete id, cb
+          show = @displayEngineList.bind this
+
+          engine.nameLookup name
+            .then (obj) ->
+              id = obj.id
+              engine.relationsOf id
+                .then (rel) ->
+                  show rel
+
+        create: (name = "", desc = "") ->
+          @engine.create name, desc, cb
+            .then (data) => @writeln "\nCreated #{name} with id #{data.id}"
+            .catch (e) => @writeln "\nCouldn't create #{name}: #{e}"
+
+        delete: (selector) ->
+          engine = @engine
+          if selector.indexOf '.' > -1
+            [objName, propName] = selector.split '.'
+            engine.nameLookup objName
+              .then (obj) ->
+                engine.delProp obj.id, propName
           else
-            engine.nameLookup selector.name, (id) ->
-              engine.delete id, cb
+            engine.nameLookup selector
+              .then (obj) ->
+                engine.delete obj.id
 
   displayEngineList: (data) ->
     @writeLines "", (util.tableFromObjectList data, "id name description".split " ")...
@@ -202,8 +235,11 @@ module.exports = class ShellClient
 
   resultReporter: (cmd, args) ->
     (data) =>
-      @writeLines "\nResults from your engine request: #{cmd} #{args}",
-        JSON.stringify data
+      if (Array.isArray data) and (data.filter (x) -> 'object' is typeof x).length
+        @writeLines [""].concat util.tableFromObjectList data
+      else
+        @writeLines "\nResults from your engine request: #{cmd} #{args}",
+          JSON.stringify data
       @rl.prompt()
 
   unknownCommand: (cmdstr, line) ->
