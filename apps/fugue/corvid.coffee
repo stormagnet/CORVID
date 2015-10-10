@@ -70,7 +70,7 @@ module.exports = (makeId = -> nextId++) ->
         if @namespace
           parts[0] = @prefix + parts[0]
           @util.addName @namespace, parts, o
-        
+
       return @o[o.id] = o
 
     relate: (subj, rel, obj) ->
@@ -82,7 +82,7 @@ module.exports = (makeId = -> nextId++) ->
         o.ctx =
           engine: {}
           core: {}
-          
+
       findOrCreate: ({name}) ->
         if not name
           throw new Error 'Can not look for empty (or falsy) name'
