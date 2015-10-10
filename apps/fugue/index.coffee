@@ -13,8 +13,6 @@ app = new CorvidCLI
   cmds: (require './commands')(db)
   throbber: ['/-\\|', 250]
 
-console.log db
-
 app.start
   greeting: """
     Welcome to another CORVID

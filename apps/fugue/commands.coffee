@@ -1,5 +1,7 @@
 class CommandDb
-  constructor: ({@db, @send, @query, @getLines}) ->
+  constructor: ({@db, @terminal}) ->
+
+  send: (text) -> @terminal.write text
 
   help: (args) ->
     @send 'no'
@@ -9,12 +11,11 @@ class CommandDb
        throw new Error '> requires three names'
 
      [subj, rel, obj] = arguments[0].map (o) -> util.matchOrMakeObject name: o
-     rel.create subj, obj
+     rel.relate subj, obj
 
   '=': ([name, value...], l) ->
-    return console.log @db
     if not name
-      return @send "DB so far contains:\n  " + Object.keys(@db.names).join("  \n")
+      return @send "DB so far contains:\n  " + Object.keys(@db.names).join ' '
 
     [o, p, rest...] = name.split '.'
     return @send 'Not so fast' if rest.length

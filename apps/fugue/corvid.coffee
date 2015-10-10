@@ -1,65 +1,98 @@
-uuid = require 'node-uuid'
-makeId = -> uuid.unparse uuid.v4()
+nextId = 0
 
-contextFinder = (obj) ->
-  (info) ->
-    (info = {looseMatch: info}) if typeof info is 'string'
+module.exports = (makeId = -> nextId++) ->
+  contextFinder = (obj) ->
+    (info) ->
+      (info = {looseMatch: info}) if typeof info is 'string'
 
-    return undefined unless typeof info is 'object'
+      return undefined unless typeof info is 'object'
 
-    {looseMatch, name, id} = info
+      {looseMatch, name, id} = info
 
-    lookupContext = obj.db.lookupContext.bind obj
+      lookupContext = obj.db.lookupContext.bind obj
 
-    return o if id and o = obj.db.o[id]
-    return o if name and o = obj.db.names[name]
-    return o if o = lookupContext looseMatch
-    return undefined
+      return o if id and o = obj.db.o[id]
+      return o if name and o = obj.db.names[name]
+      return o if o = lookupContext looseMatch
+      return undefined
 
-    return  (id and obj.db.o[id]) or
-            (name and obj.db.names[name]) or
-            (lookupContext looseMatch)
+      return  (id and obj.db.o[id]) or
+              (name and obj.db.names[name]) or
+              (lookupContext looseMatch)
 
-class Euclidic
-  constructor: ({name}) ->
-    @id = makeId()
-    @name = name # for now
+  class Euclidic
+    constructor: ({name}) ->
+      @id = makeId()
+      @isSubjOf = @isObjOf = @defines = {}
+      @util.initContexts this
+      @ctx.engine.name = name
 
-class Db
-  constructor: (@namespace, @prefix = '$') ->
-    @names = {}
-    @o = {}
+    name: -> @ctx.engine.name
 
-    @create 'sys'
-    @create 'root'
+    # XXX: we don't care about these yet
+    isSubjOf: ->
+    defines: ->
+    isObjOf: ->
 
-  findOrCreate: ({name}) ->
-    if not name
-      throw new Error 'Cannot match empty (or falsy) name'
+  class Relation extends Euclidic
+    constructor: ({@subj, @rel, @obj, @params}) ->
+      super arguments[0]
+      @subj.isSubjOf this
+      @rel.defines this
+      @obj.isObjOf this
 
-    @names[name] or @create arguments[0]
+    relate: (subject, object) ->
+      rel = new Relation
+        relationship: this
+        subject: subject
+        object: object
 
-  create: ({name}) ->
-    console.log 'create: ', name
-    o = new Euclidic name: name
+    toString: ->
+      "#{@subj.name} #{@name} #{@obj.name}"
 
-    if name and (parts = name.split '.') and parts[0]
-      @util.addName @names, parts, o
+  class Db
+    constructor: (@namespace, @prefix = '$') ->
+      @names = {}
+      @o = {}
+      @relationshis = [] # might not need this
 
-      if @namespace
-        parts[0] = @prefix + parts[0]
-        @util.addName @namespace, parts, o
-      
-    return @o[o.id] = o
+      @create 'sys'
+      @create 'root'
+      @create name: 'relation', klass: Relation
 
-  util:
-    addName: (ns, parts, o) ->
-      for part in parts[0 .. parts.length - 2]
-        ns = (ns[part] or= {})
+    create: ({name, klass = Euclidic}) ->
+      name or= arguments[0]
+      o = new klass name: name
 
-      ns[parts.pop()] = o
+      if name and (parts = name.split '.') and parts[0]
+        @util.addName @names, parts, o
 
-module.exports = () ->
-  Euclidic: Euclidic
-  Db: Db
+        if @namespace
+          parts[0] = @prefix + parts[0]
+          @util.addName @namespace, parts, o
+        
+      return @o[o.id] = o
 
+    relate: (subj, rel, obj) ->
+      @relationships.push r = new Relation subj, rel, obj
+      r
+
+    util:
+      initContexts: (o) ->
+        o.ctx =
+          engine: {}
+          core: {}
+          
+      findOrCreate: ({name}) ->
+        if not name
+          throw new Error 'Can not look for empty (or falsy) name'
+
+        @names[name] or @create arguments[0]
+
+      addName: (ns, parts, o) ->
+        for part in parts[0 .. parts.length - 2]
+          ns = (ns[part] or= {})
+
+        ns[parts.pop()] = o
+
+  return Euclidic: Euclidic, Db: Db
