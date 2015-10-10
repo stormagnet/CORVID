@@ -1,19 +1,22 @@
 {
-  "name": "demo",
+  "name": "CORVID",
   "version": "1.0.0",
-  "description": "trying out stuff from http://www.marcusoft.net/2015/03/node-with-coffeescript---not-a-piece-of-cake.html",
-  "main": "index.js",
+  "description": "See github.com/stormagnet/CORVID.wiki",
+  "main": "index.coffee",
   "scripts": {
     "test": "NODE_PATH=src mocha -u exports -w --compilers coffee:coffee-script/register",
     "start": "mkdir -p dist;(coffee --compile -o dist --watch src &);./node_modules/nodemon/bin/nodemon.js ./dist/index.js",
     "clean": "rm -rf dist"
   },
-  "author": "that guy",
+  "author": "",
   "license": "MIT",
   "devDependencies": {
     "coffee-script": "^1.9.3",
     "mocha": "^2.2.5",
     "nodemon": "^1.3.7",
     "should": "^7.0.1"
+  },
+  "dependencies": {
+    "node-uuid": "^1.4.3"
   }
 }
