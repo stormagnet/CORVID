@@ -26,6 +26,7 @@ module.exports = (makeId = -> nextId++) ->
       @isSubjOf = @isObjOf = @defines = {}
       @util.initContexts this
       @ctx.engine.name = name
+      @methods
 
     name: -> @ctx.engine.name
 
@@ -33,6 +34,11 @@ module.exports = (makeId = -> nextId++) ->
     isSubjOf: ->
     defines: ->
     isObjOf: ->
+
+    addMethod: (name, code, compiler) ->
+      @methods[name] = compiler(code).bind this
+      @methods[name].code = code
+      @methods[name].compiler = compiler
 
   class Relation extends Euclidic
     constructor: ({@subj, @rel, @obj, @params}) ->
@@ -50,15 +56,34 @@ module.exports = (makeId = -> nextId++) ->
     toString: ->
       "#{@subj.name} #{@name} #{@obj.name}"
 
+  class Context extends Euclidic
+    constructor: ({name}) ->
+      super arguments[0]
+
+
+
   class Db
     constructor: (@namespace, @prefix = '$') ->
       @names = {}
       @o = {}
-      @relationshis = [] # might not need this
+      @relationships = {}
+      @contexts = {}
 
       @create 'sys'
       @create 'root'
+      @create name: 'context', klass: Context
+        .spawn 'engine'
+        .spawn 'core'
       @create name: 'relation', klass: Relation
+
+    addContext: ->
+      @names.context.spawn arguments[0]
+
+    relate: (subj, rel, obj) ->
+      @names.relation.spawn
+        subj: subj
+        rel: rel
+        obj: obj
 
     create: ({name, klass = Euclidic}) ->
       name or= arguments[0]
@@ -72,10 +97,6 @@ module.exports = (makeId = -> nextId++) ->
           @util.addName @namespace, parts, o
 
       return @o[o.id] = o
-
-    relate: (subj, rel, obj) ->
-      @relationships.push r = new Relation subj, rel, obj
-      r
 
     util:
       initContexts: (o) ->
