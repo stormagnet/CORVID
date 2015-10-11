@@ -15,7 +15,7 @@
       "type": "any",
       "required": true
     },
-    "localid": {
+    "localId": {
       "type": "string",
       "required": true
     }
