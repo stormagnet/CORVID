@@ -24,23 +24,7 @@
     }
   },
   "validations": [],
-  "relations": {
-    "subject": {
-      "type": "hasOne",
-      "model": "local",
-      "foreignKey": "subjectOf"
-    },
-    "object": {
-      "type": "hasOne",
-      "model": "local",
-      "foreignKey": "objectOf"
-    },
-    "relationship": {
-      "type": "hasOne",
-      "model": "local",
-      "foreignKey": "definitionOf"
-    }
-  },
+  "relations": {},
   "acls": [],
   "methods": {}
 }

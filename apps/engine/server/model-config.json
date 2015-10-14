@@ -32,12 +32,6 @@
     "dataSource": "db",
     "public": false
   },
-  "proxy": {
-    "dataSource": "localMongo",
-    "public": true,
-    "$promise": {},
-    "$resolved": true
-  },
   "relation": {
     "dataSource": "localMongo",
     "public": true,
@@ -58,18 +52,6 @@
   },
   "behavior": {
     "dataSource": "localMongo",
-    "public": true,
-    "$promise": {},
-    "$resolved": true
-  },
-  "domain": {
-    "dataSource": "localMongo",
-    "public": true,
-    "$promise": {},
-    "$resolved": true
-  },
-  "connection": {
-    "dataSource": "db",
     "public": true,
     "$promise": {},
     "$resolved": true
