@@ -27,17 +27,17 @@
     "subjectOf": {
       "type": "hasMany",
       "model": "relation",
-      "foreignKey": "subject"
+      "foreignKey": "subjectId"
     },
     "objectOf": {
       "type": "hasMany",
       "model": "relation",
-      "foreignKey": "object"
+      "foreignKey": "objectId"
     },
     "definitionOf": {
       "type": "hasMany",
       "model": "relation",
-      "foreignKey": "relationship"
+      "foreignKey": "relationshipId"
     }
   },
   "acls": [],

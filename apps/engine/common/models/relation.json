@@ -10,21 +10,37 @@
     "parameters": {
       "type": "object"
     },
-    "object": {
+    "subjectId": {
       "type": "string",
       "index": true
     },
-    "relationship": {
+    "objectId": {
       "type": "string",
       "index": true
     },
-    "subject": {
+    "relationshipId": {
       "type": "string",
       "index": true
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "subject": {
+      "type": "belongsTo",
+      "model": "local",
+      "foreignKey": "subjectId"
+    },
+    "object": {
+      "type": "belongsTo",
+      "model": "local",
+      "foreignKey": "objectId"
+    },
+    "relationship": {
+      "type": "belongsTo",
+      "model": "local",
+      "foreignKey": "relationshipId"
+    }
+  },
   "acls": [],
   "methods": {}
 }
