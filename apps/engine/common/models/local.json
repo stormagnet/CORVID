@@ -9,19 +9,27 @@
   "properties": {
     "name": {
       "type": "string",
-      "comments": "for dev purposes"
-    },
-    "description": {
-      "type": "string",
-      "comments": "for dev purposes"
-    },
-    "proxyId": {
-      "type": "string",
-      "comments": "if set, 'official' object is tracked by referenced proxy"
+      "comments": "for dev purposes, will be removed eventually"
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "properties": {
+      "type": "hasMany",
+      "model": "property",
+      "foreignKey": "localId"
+    },
+    "behaviors": {
+      "type": "hasMany",
+      "model": "behavior",
+      "foreignKey": "localId"
+    },
+    "relations": {
+      "type": "hasMany",
+      "model": "relation",
+      "foreignKey": "localId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

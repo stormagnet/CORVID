@@ -10,22 +10,26 @@
     "parameters": {
       "type": "string",
       "comments": "JSON encoded dict until further notice"
-    },
-    "objectId": {
-      "type": "string",
-      "required": true
-    },
-    "relationType": {
-      "type": "string",
-      "required": true
-    },
-    "subjectId": {
-      "type": "string",
-      "required": true
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "subject": {
+      "type": "hasOne",
+      "model": "local",
+      "foreignKey": ""
+    },
+    "relationship": {
+      "type": "hasOne",
+      "model": "local",
+      "foreignKey": ""
+    },
+    "object": {
+      "type": "hasOne",
+      "model": "local",
+      "foreignKey": ""
+    }
+  },
   "acls": [],
   "methods": {}
 }
