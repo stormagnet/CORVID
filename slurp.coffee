@@ -1,87 +1,47 @@
-class DirEnt
-  constructor: (@name, @stats) ->
-
-class Dir extends DirEnt
-  constructor: (args...) ->
-    @data: {}
-    super args...
-
-  addEnt: (ent) ->
-    if @data[ent.name]
-      throw new Error 'name already exists'
-
-    @data[ent.name] = ent
-
-  dirList: ->
-    Object.getOwnPropertyNames @data
-
-class File extends DirEnt
-  constructor: (args...) ->
-    @data: ""
-    super args...
-
-  setData: (@data) ->
-
-class Link extends DirEnt
-  constructor: (args...) ->
-    @target: ""
-    super args...
-
-  setTarget: (@target) ->
-
 fs = require 'fs'
 path = require 'path'
 
-slurpAny = (fullPath, failure, success) ->
-  fs.lstat fullPath, (err, stats) ->
-    if err
-      failure err
+UNSUPPORTED_DIRENT_TYPE =
+  new Error "Unsupported file type for '#{path.join @path, name}'"
 
-    else if stats.isFile()
-      slurpFile fullPath, failure, (f) ->
-        f.stats = stats
-        success f
+class DirEnt
+  constructor: ({@path, @stat}) ->
+    if not @stat
+      @stat = new Promise (resolve, reject) ->
+        fs.lstat @path, (err, stat) ->
+          reject err if err
 
-    else if stats.isDirectory()
-      slurpDir fullPath, failure, (d) ->
-        d.stats = stats
-        success d
+          @stat = stat
 
-    else if stats.isSymbolicLink()
-      slurpLink fullPath, failure, (l) ->
-        l.stats = stats
-        success l
+class Dir extends DirEnt
+  constructor: ({@path}) ->
+    super
 
-slurpDir = (fullPath, success, failure) ->
-  fs.readdir fullPath, (err, entries) ->
-    if err
-      failure err
-    else
-      slurpEntries dir, entries, success, failure
+    @_scan()
 
-slurpEntries = (dir, entry, entries..., success, failure) ->
-  slurpAny dir, entry, failure, (e) ->
-    dir.addEnt e
+  _scan: ->
+    new Promise (resolve, reject) ->
+      fs.readdir @path, (err, entries) ->
+        reject err if err
 
-    if entries
-      slurpEntries dir, entries, success, failure
-    else
-      success dir
+        @_addEntry name for name in entries
 
-slurpFile = (fullPath, failure, success) ->
-  fs.readFile fullPath, (err, data) ->
-    if err
-      failure err
-    else
-      ent = new File path.basename fullPath
-      ent.setData data
-      success ent
+  @_addEntry: (name) ->
+    self = this
+    new Promise (resolve, reject) ->
+      fs.lstat path.join(@path, name), (err, stat) ->
+        reject err if err
 
-slurpLink = (fullPath, failure, success) ->
-  fs.readLink fullPath, (err, target) ->
-    if err
-      failure err
-    else
-      link = new Link path.basename fullPath
-      link.setTarget target
-      success link
+        klass = if stat.isDirectory() then Dir
+          else if stat.isFile() then File
+          else if stat.isSymbolicLink() then SymLink
+          else throw UNSUPPORTED_DIRENT_TYPE
+
+        o = new klass name: name, stat: stat
+        Object.defineProperty self, name, value: o
+        resolve o
+
+class File extends DirEnt
+
+class Link extends DirEnt
+
