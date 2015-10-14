@@ -24,10 +24,20 @@
       "model": "behavior",
       "foreignKey": "localId"
     },
-    "relations": {
+    "subjectOf": {
       "type": "hasMany",
       "model": "relation",
-      "foreignKey": "localId"
+      "foreignKey": "subject"
+    },
+    "objectOf": {
+      "type": "hasMany",
+      "model": "relation",
+      "foreignKey": "object"
+    },
+    "definitionOf": {
+      "type": "hasMany",
+      "model": "relation",
+      "foreignKey": "relationship"
     }
   },
   "acls": [],

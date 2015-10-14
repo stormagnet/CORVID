@@ -56,12 +56,6 @@
     "$promise": {},
     "$resolved": true
   },
-  "config": {
-    "dataSource": "localMongo",
-    "public": true,
-    "$promise": {},
-    "$resolved": true
-  },
   "behavior": {
     "dataSource": "localMongo",
     "public": true,
