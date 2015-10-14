@@ -7,24 +7,15 @@
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string",
-      "required": true,
-      "comments": "for human consumption"
-    },
     "localId": {
       "type": "string",
       "required": true,
       "comments": "local object used to reference this behavior"
     },
-    "uri": {
-      "type": "string",
-      "comments": "How to fetch this module if not already loaded"
-    },
-    "moduleId": {
-      "type": "string",
-      "required": false,
-      "comments": "CommonJS or AMD module ID"
+    "package": {
+      "type": "object",
+      "required": true,
+      "comments": ""
     }
   },
   "validations": [],
