@@ -1,41 +1,36 @@
-# invoke
+# simple
+
+## invoke
 
   ! name.prop args...
 
-# create
+## create
 
   = name description...
 
-Also
-
-  = name < parent
-
-Is shorthand for
-
-  = name
-  > name IsA parent
-
-# edit
+## edit
 
   = name.prop value...
 
-# program
+## relate
+
+  > subject relation object
+
+# advanced
+
+## program
 
   . name.prop args...
     ... code ...
   .
 
-# load module
+## load module
 
   @ name url
 
 Acts like (require(url))(db[name])
 
-# relate
-
-  > subject relation object
-
-# query
+## query
 
   ? name
   ? name.prop
