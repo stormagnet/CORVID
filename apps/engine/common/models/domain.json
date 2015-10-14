@@ -1,5 +1,5 @@
 {
-  "name": "activeConnection",
+  "name": "domain",
   "base": "PersistedModel",
   "strict": false,
   "idInjection": false,
@@ -7,13 +7,17 @@
     "validateUpsert": true
   },
   "properties": {
-    "domain": {
-      "type": "string",
-      "required": true
+    "GID": {
+      "type": "string"
     },
-    "socket": {
-      "type": "number",
-      "id": false
+    "description": {
+      "type": "string"
+    },
+    "domainURL": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
     }
   },
   "validations": [],
