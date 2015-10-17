@@ -2,7 +2,6 @@
   "name": "relation",
   "base": "PersistedModel",
   "strict": false,
-  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
@@ -27,17 +26,17 @@
   "relations": {
     "subject": {
       "type": "belongsTo",
-      "model": "local",
+      "model": "referent",
       "foreignKey": "subjectId"
     },
     "object": {
       "type": "belongsTo",
-      "model": "local",
+      "model": "referent",
       "foreignKey": "objectId"
     },
     "relationship": {
       "type": "belongsTo",
-      "model": "local",
+      "model": "referent",
       "foreignKey": "relationshipId"
     }
   },

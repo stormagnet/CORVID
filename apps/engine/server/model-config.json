@@ -38,12 +38,6 @@
     "$promise": {},
     "$resolved": true
   },
-  "local": {
-    "dataSource": "localMongo",
-    "public": true,
-    "$promise": {},
-    "$resolved": true
-  },
   "property": {
     "dataSource": "localMongo",
     "public": true,
@@ -51,6 +45,12 @@
     "$resolved": true
   },
   "behavior": {
+    "dataSource": "localMongo",
+    "public": true,
+    "$promise": {},
+    "$resolved": true
+  },
+  "referent": {
     "dataSource": "localMongo",
     "public": true,
     "$promise": {},

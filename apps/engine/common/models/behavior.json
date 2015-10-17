@@ -2,20 +2,26 @@
   "name": "behavior",
   "base": "PersistedModel",
   "strict": false,
-  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "localId": {
+    "referentId": {
       "type": "string",
       "required": true,
-      "comments": "local object used to reference this behavior"
+      "comments": "referent interface to this behavior"
     },
     "package": {
       "type": "object",
       "required": true,
       "comments": ""
+    }
+  },
+  "relations": {
+    "referent": {
+      "model": "referent",
+      "type": "belongsTo",
+      "foreignKey": "referentId"
     }
   },
   "validations": [],

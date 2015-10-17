@@ -1,8 +1,7 @@
 {
-  "name": "local",
+  "name": "referent",
   "base": "PersistedModel",
   "strict": false,
-  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
@@ -17,27 +16,22 @@
     "properties": {
       "type": "hasMany",
       "model": "property",
-      "foreignKey": "localId"
+      "foreignKey": "referentId"
     },
-    "behaviors": {
-      "type": "hasMany",
-      "model": "behavior",
-      "foreignKey": "localId"
-    },
-    "subjectOf": {
+    "definitionOf": {
       "type": "hasMany",
       "model": "relation",
-      "foreignKey": "subjectId"
+      "foreignKey": "relationshipId"
     },
     "objectOf": {
       "type": "hasMany",
       "model": "relation",
       "foreignKey": "objectId"
     },
-    "definitionOf": {
+    "subjectOf": {
       "type": "hasMany",
       "model": "relation",
-      "foreignKey": "relationshipId"
+      "foreignKey": "subjectId"
     }
   },
   "acls": [],
