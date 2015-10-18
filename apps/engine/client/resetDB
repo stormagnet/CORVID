@@ -1,0 +1,15 @@
+#!/usr/bin/env coffee
+
+app = require '../server/server'
+process = require 'process'
+
+[coffee, script, args...] = process.argv
+
+if args.length
+  descriptor = args.shift()
+  query = name: descriptor
+
+app.models.Referent.find name: descriptor
+  .then (found) ->
+    console.log found
+    process.exit 0

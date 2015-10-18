@@ -17,14 +17,14 @@ coreTree =
       destroy: {}
     dimension: {}
 
-loadTree (src, dest) ->
+loadTree = (src, dest) ->
   for k, v of src
-    dest[k] = {}
-
-    app.models.Referent.findOrCreate name: e
+    app.models.Referent.findOrCreate name: k
       .then (ref) ->
         dest[k] = ref
         loadTree v, ref
+
+core = {}
 
 loadTree coreTree, core
 
