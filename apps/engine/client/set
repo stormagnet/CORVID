@@ -1,0 +1,32 @@
+#!/usr/bin/env coffee
+
+process = require 'process'
+
+[coffee, script, args...] = process.argv
+
+if args.length < 3
+  console.log 'Must provide a referent, property and value'
+  process.exit 0
+
+[refName, propName, valueStr] = args
+
+value = JSON.parse valueStr
+
+console.log "'#{valueStr}' parsed as #{JSON.stringify value}"
+
+app = require '../server/server'
+
+app.models.Referent.findOrCreate name: refName
+  .then (o) ->
+    console.log o
+    o = o[0]
+    app.models.Property.findOrCreate
+      referentId: o.id
+      name: propName
+      value: value
+  .then (ok) ->
+    console.log 'Done'
+    process.exit 0
+  .catch (err) ->
+    console.log "There was an error: ", err, err.stack
+    process.exit 1

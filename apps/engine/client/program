@@ -1,0 +1,33 @@
+#!/usr/bin/env coffee
+
+process = require 'process'
+coffee = require 'coffee-script'
+
+[coffee, script, args...] = process.argv
+
+if args.length < 2
+  console.log 'Must provide a referent and method name'
+  process.exit 0
+
+app = require '../server/server'
+
+[refName, methName] = args
+
+
+app.models.Referent.findOrCreate name: refName
+  .then (referent) ->
+    app.models.Behavior.find referentId: referent.id
+  .then (behavior) ->
+    code = ""
+    process.stdin.on 'data', (d) -> code += d
+    process.stdin.on 'end', ->
+      behavior.package.methods[methName] =
+        code: code
+        fn: coffee.eval code
+      behavior.save()
+  .then (results) ->
+    console.log "Success (#{results})"
+    process.exit 0
+  .catch (err) ->
+    console.log "There was an error: ", err
+    process.exit 1

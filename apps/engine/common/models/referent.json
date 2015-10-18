@@ -13,6 +13,11 @@
   },
   "validations": [],
   "relations": {
+    "behavior": {
+      "type": "hasOne",
+      "model": "behavior",
+      "foreignKey": "referentId"
+    },
     "properties": {
       "type": "hasMany",
       "model": "property",
