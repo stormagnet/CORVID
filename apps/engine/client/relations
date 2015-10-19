@@ -7,27 +7,38 @@ process = require 'process'
 
 parts = ['subject', 'relationship', 'object']
 
-if args.length < 1
-  console.log "No relation specified, here are the current participants:"
-
+fullBreakdown = ->
   app.models.Relation.find include: parts
     .then (relations) ->
       relationReport relations
 
 relationReport = (rels) ->
-  relations = {}
   referents = {}
 
   for r in rels
-    referents[s.id] or= {o: s = r.subject(),      s: 0, v: 0, o: 0}
-    referents[v.id] or= {o: v = r.relationship(), s: 0, v: 0, o: 0}
-    referents[o.id] or= {o: o = r.object(),       s: 0, v: 0, o: 0}
+    for p in parts
+      po = r[p]()
+      referents[po.id] or= name: po.name, subject: 0, relationship: 0, object: 0
+      referents[po.id][p]++
 
-    referents[s.id].s++
-    referents[v.id].v++
-    referents[o.id].o++
+  for id, o of referents
+    console.log id, o.name, o.subject, o.relationship, o.object
 
-    relations[r.id] = {r: r, s: s, v: v, o: o}
+  false #referents
 
-  for id, o in referents
-    console.log id, o.o.name, o.s, o.v, o.o
+(
+  switch args.length
+    when 0
+      fullBreakdown()
+    when 1
+      app.models.Referent.findOne name: args[0]
+        .then (ref) ->
+          console.log 'not yet implemented'
+) .then (result) ->
+    console.log result if result
+    process.exit 0
+  .catch (err) ->
+    console.log err
+    process.exit 1
+
+

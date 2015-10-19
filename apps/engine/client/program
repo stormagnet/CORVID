@@ -3,7 +3,7 @@
 process = require 'process'
 coffee = require 'coffee-script'
 
-[coffee, script, args...] = process.argv
+[execName, scriptName, args...] = process.argv
 
 if args.length < 2
   console.log 'Must provide a referent and method name'
@@ -13,21 +13,35 @@ app = require '../server/server'
 
 [refName, methName] = args
 
+code = ""
 
-app.models.Referent.findOrCreate name: refName
-  .then (referent) ->
-    app.models.Behavior.find referentId: referent.id
-  .then (behavior) ->
-    code = ""
-    process.stdin.on 'data', (d) -> code += d
-    process.stdin.on 'end', ->
+process.stdin
+  .on 'data', (d) ->
+    code += d
+    lines = code.split '\n'
+    if (idx = lines.indexOf '.') > -1
+      doProgram lines[0..idx].join '\n'
+  .on 'end', ->
+    doProgram code
+
+doProgram = (code) ->
+  fn = coffee.eval code
+  app.models.Referent.findOrCreate name: refName
+    .then (found) ->
+      [referent, rest...] = found
+      app.models.Behavior.findOrCreate {referentId: referent.id},
+        referentId: referent.id
+        package: methods: {}
+    .then (found) ->
+      [behavior, isNew] = found
+      behavior.package.methods or= {}
       behavior.package.methods[methName] =
         code: code
-        fn: coffee.eval code
+        fn: fn
       behavior.save()
-  .then (results) ->
-    console.log "Success (#{results})"
-    process.exit 0
-  .catch (err) ->
-    console.log "There was an error: ", err
-    process.exit 1
+    .then (results) ->
+      console.log "Success (#{results})"
+      process.exit 0
+    .catch (err) ->
+      console.log "There was an error: ", err
+      process.exit 1
