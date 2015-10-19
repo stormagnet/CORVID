@@ -1,0 +1,33 @@
+#!/usr/bin/env coffee
+
+app = require '../server/server'
+process = require 'process'
+
+[coffee, script, args...] = process.argv
+
+parts = ['subject', 'relationship', 'object']
+
+if args.length < 1
+  console.log "No relation specified, here are the current participants:"
+
+  app.models.Relation.find include: parts
+    .then (relations) ->
+      relationReport relations
+
+relationReport = (rels) ->
+  relations = {}
+  referents = {}
+
+  for r in rels
+    referents[s.id] or= {o: s = r.subject(),      s: 0, v: 0, o: 0}
+    referents[v.id] or= {o: v = r.relationship(), s: 0, v: 0, o: 0}
+    referents[o.id] or= {o: o = r.object(),       s: 0, v: 0, o: 0}
+
+    referents[s.id].s++
+    referents[v.id].v++
+    referents[o.id].o++
+
+    relations[r.id] = {r: r, s: s, v: v, o: o}
+
+  for id, o in referents
+    console.log id, o.o.name, o.s, o.v, o.o

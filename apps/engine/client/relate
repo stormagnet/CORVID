@@ -1,0 +1,34 @@
+#!/usr/bin/env coffee
+
+process = require 'process'
+
+[coffee, script, args...] = process.argv
+
+if args.length < 3
+  console.log 'Must provide a subject, relationship and object'
+  process.exit 0
+
+[subjName, relName, objName] = args
+
+app = require '../server/server'
+Referent = app.models.Referent
+getReferent = (name) ->
+  new Promise (resolve, reject) ->
+    Referent.findOrCreate name: name, (err, obj) ->
+      reject err if err
+      resolve obj
+
+(getReferent subjName).then (subj) ->
+  (getReferent relName).then (rel) ->
+    (getReferent objName).then (obj) ->
+      console.log "#{subj.name} '#{rel.name}' #{obj.name}"
+      app.models.Relation.upsert
+        subjectId: subj.id
+        relationshipId: rel.id
+        objectId: obj.id
+  .then (ok) ->
+    console.log 'Done'
+    process.exit 0
+  .catch (err) ->
+    console.log "There was an error: ", err, err.stack
+    process.exit 1
