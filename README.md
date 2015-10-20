@@ -1,12 +1,13 @@
 # CORVID
 Consentual Objective Reality: Virtualized, Interpreted, Distributed
 
-## 'fresh-start' branch
+See [the wiki](https://github.com/stormagnet/CORVID) for introduction, news etc.
 
-### MVP
+The current goal is to have something other people can play with as easily as possible. Instructions might look something like this:
 
+    $ npm install
     $ npm install path/to/finch
-    $ npm start
+    $ node world/finch
     > 
 
 

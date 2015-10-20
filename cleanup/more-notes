@@ -1,0 +1,28 @@
+Default Engine object provides access to lower layer.
+
+Objects loaded via bootstrap CLI get reference to Engine.
+
+Engine methods:
+
+  Construction
+    create(name) => Referent
+    relate(relationship, subject, object) => Relation
+    set(name, propName, value) => Property
+    require(name) => Behavior
+
+  Query
+    lookupRef(name) => Referent
+    lookupProp(referent, propName) => Property
+    lookupBehavior(referent) => Behavior
+
+  Referent methods
+    .definitionOf() => [Relation]
+    .subjectOf() => [Relation]
+    .objectOf() => [Relation]
+    .relate(subj, obj) => Relation
+
+  Relation methods
+    .subject()
+    .object()
+    .definition()
+    .props()
