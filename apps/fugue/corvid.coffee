@@ -1,35 +1,29 @@
+util = require 'util'
 nextId = 0
 
 module.exports = (makeId = -> nextId++) ->
-  behaviorFinder = (obj) ->
-    (info) ->
-      (info = {looseMatch: info}) if typeof info is 'string'
-
-      return undefined unless typeof info is 'object'
-
-      {looseMatch, name, id} = info
-
-      lookupBehavior = obj.db.lookupBehavior.bind obj
-
-      return o if id and o = obj.db.o[id]
-      return o if name and o = obj.db.names[name]
-      return o if o = lookupBehavior looseMatch
-      return undefined
-
-      return  (id and obj.db.o[id]) or
-              (name and obj.db.names[name]) or
-              (lookupBehavior looseMatch)
-
   class Referent
     constructor: (@db) ->
       @id = makeId()
       @behaviors = {}
+      @as = {}
+
       @db.registerRef this
 
-    addBehavior: (behavior) ->
-      self = {}
+    addBehavior: (behavior, name = behavior.name) ->
+      if util.isFunction name
+        name = name()
+
+      self = euclidic: this
       Object.setPrototypeOf self, behavior
       @behaviors[behavior.id] = self
+
+      if name
+        @as[behavior.name] = self
+
+      behavior.as.behavior.init self
+
+    delBehavior: (behavior) -> delete @behaviors[behavior.id]
 
     withBehavior: (behavior, methodName, args) ->
       self = @behaviors[behavior.id]
@@ -57,29 +51,37 @@ module.exports = (makeId = -> nextId++) ->
 
     relate: (subject, object, @params = {}) ->
       new Relation
-        relationship: @id
-        subject: subject.id
-        object: object.id
+        @rel = this
+        @sub = subject
+        @obj = object
 
     toString: ->
-      "#{@subj.name} #{@name} #{@obj.name}"
+      "#{@subj.name} #{} #{@obj.name}"
 
 
   class Db
     constructor: (@namespace, @prefix = '$') ->
       @names = {}
       @o = {}
-      @relationships = {}
+      @rel =
+        bySub: {}
+        byRel: {}
+        byObj: {}
       @initDb()
+
+    registerRef: (ref) ->
+      @o[ref.id] = ref
+
+    registerRel: (rel) ->
+      @rel.bySub[rel.sub.id] = rel
+      @rel.byRel[rel.rel.id] = rel
+      @rel.byObj[rel.obj.id] = rel
 
     initDb: ->
       @create 'sys'
       @create 'root'
       @create 'behavior', Behavior
       @create 'relation', Relation
-
-    addBehavior: (pkg) ->
-      @names.behavior.spawn pkg
 
     relate: (subj, rel, obj) ->
       rel.relate subj, obj
@@ -90,22 +92,28 @@ module.exports = (makeId = -> nextId++) ->
       if name
         @addName o, name
 
-    addName: (o, name) ->
-      ns = @names
+    _addName = (ns, name, value, prefix) ->
       [path..., name] = name.split '.'
 
+      if prefix
+        path[0] = prefix + path[0]
 
       for part in path
         ns = (ns[part] or= {})
 
-      ns[name] = o
+      ns[name] = value
 
-    util:
-      findOrCreate: ({name}) ->
-        if not name
-          throw new Error 'Can not look for empty (or falsy) name'
+    addName: (o, name) ->
+      _addName @names, name, o
+      
+      if @prefix
+        _addName module, name, o, @prefix
 
-        @names[name] or @create arguments[0]
+    findOrCreate: ({name}) ->
+      if not name
+        throw new Error 'Can not look for empty (or falsy) name'
+
+      @names[name] or @create arguments[0]
 
   return {
       Referent: Referent
