@@ -1,7 +1,7 @@
 nextId = 0
 
 module.exports = (makeId = -> nextId++) ->
-  contextFinder = (obj) ->
+  behaviorFinder = (obj) ->
     (info) ->
       (info = {looseMatch: info}) if typeof info is 'string'
 
@@ -9,57 +9,60 @@ module.exports = (makeId = -> nextId++) ->
 
       {looseMatch, name, id} = info
 
-      lookupContext = obj.db.lookupContext.bind obj
+      lookupBehavior = obj.db.lookupBehavior.bind obj
 
       return o if id and o = obj.db.o[id]
       return o if name and o = obj.db.names[name]
-      return o if o = lookupContext looseMatch
+      return o if o = lookupBehavior looseMatch
       return undefined
 
       return  (id and obj.db.o[id]) or
               (name and obj.db.names[name]) or
-              (lookupContext looseMatch)
+              (lookupBehavior looseMatch)
 
-  class Euclidic
-    constructor: ({name}) ->
+  class Referent
+    constructor: (@db) ->
       @id = makeId()
-      @isSubjOf = @isObjOf = @defines = {}
-      @util.initContexts this
-      @ctx.engine.name = name
-      @methods
+      @behaviors = {}
+      @db.registerRef this
 
-    name: -> @ctx.engine.name
+    addBehavior: (behavior) ->
+      self = {}
+      Object.setPrototypeOf self, behavior
+      @behaviors[behavior.id] = self
 
-    # XXX: we don't care about these yet
-    isSubjOf: ->
-    defines: ->
-    isObjOf: ->
+    withBehavior: (behavior, methodName, args) ->
+      self = @behaviors[behavior.id]
+      method = behavior.methods[methodName]
+      method.call self, args
+
+
+  class Behavior extends Referent
+    constructor: ->
+      super
+      @methods = {}
 
     addMethod: (name, code, compiler) ->
       @methods[name] = compiler(code).bind this
       @methods[name].code = code
       @methods[name].compiler = compiler
 
-  class Relation extends Euclidic
-    constructor: ({@subj, @rel, @obj, @params}) ->
-      super arguments[0]
-      @subj.isSubjOf this
-      @rel.defines this
-      @obj.isObjOf this
+    delMethod: (name) -> delete @methods[name]
 
-    relate: (subject, object) ->
-      rel = new Relation
-        relationship: this
-        subject: subject
-        object: object
+
+  class Relation extends Referent
+    constructor: ({@subj, @rel, @obj, @params}) ->
+      super
+      @db.registerRel this
+
+    relate: (subject, object, @params = {}) ->
+      new Relation
+        relationship: @id
+        subject: subject.id
+        object: object.id
 
     toString: ->
       "#{@subj.name} #{@name} #{@obj.name}"
-
-  class Context extends Euclidic
-    constructor: ({name}) ->
-      super arguments[0]
-
 
 
   class Db
@@ -67,53 +70,44 @@ module.exports = (makeId = -> nextId++) ->
       @names = {}
       @o = {}
       @relationships = {}
-      @contexts = {}
+      @initDb()
 
+    initDb: ->
       @create 'sys'
       @create 'root'
-      @create name: 'context', klass: Context
-        .spawn 'engine'
-        .spawn 'core'
-      @create name: 'relation', klass: Relation
+      @create 'behavior', Behavior
+      @create 'relation', Relation
 
-    addContext: ->
-      @names.context.spawn arguments[0]
+    addBehavior: (pkg) ->
+      @names.behavior.spawn pkg
 
     relate: (subj, rel, obj) ->
-      @names.relation.spawn
-        subj: subj
-        rel: rel
-        obj: obj
+      rel.relate subj, obj
 
-    create: ({name, klass = Euclidic}) ->
-      name or= arguments[0]
-      o = new klass name: name
+    create: (name, klass = Referent) ->
+      o = new klass db: this
 
-      if name and (parts = name.split '.') and parts[0]
-        @util.addName @names, parts, o
+      if name
+        @addName o, name
 
-        if @namespace
-          parts[0] = @prefix + parts[0]
-          @util.addName @namespace, parts, o
+    addName: (o, name) ->
+      ns = @names
+      [path..., name] = name.split '.'
 
-      return @o[o.id] = o
+
+      for part in path
+        ns = (ns[part] or= {})
+
+      ns[name] = o
 
     util:
-      initContexts: (o) ->
-        o.ctx =
-          engine: {}
-          core: {}
-
       findOrCreate: ({name}) ->
         if not name
           throw new Error 'Can not look for empty (or falsy) name'
 
         @names[name] or @create arguments[0]
 
-      addName: (ns, parts, o) ->
-        for part in parts[0 .. parts.length - 2]
-          ns = (ns[part] or= {})
-
-        ns[parts.pop()] = o
-
-  return Euclidic: Euclidic, Db: Db
+  return {
+      Referent: Referent
+      Db: Db
+    }
