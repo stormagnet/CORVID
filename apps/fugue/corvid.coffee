@@ -1,64 +1,11 @@
 util = require 'util'
 nextId = 0
 
+Referent = require 'referent'
+Behavior = require 'behavior'
+Relation = require 'relation'
+
 module.exports = (makeId = -> nextId++) ->
-  class Referent
-    constructor: (@db) ->
-      @id = makeId()
-      @behaviors = {}
-      @as = {}
-
-      @db.registerRef this
-
-    addBehavior: (behavior, name = behavior.name) ->
-      if util.isFunction name
-        name = name()
-
-      self = euclidic: this
-      Object.setPrototypeOf self, behavior
-      @behaviors[behavior.id] = self
-
-      if name
-        @as[behavior.name] = self
-
-      behavior.as.behavior.init self
-
-    delBehavior: (behavior) -> delete @behaviors[behavior.id]
-
-    withBehavior: (behavior, methodName, args) ->
-      self = @behaviors[behavior.id]
-      method = behavior.methods[methodName]
-      method.call self, args
-
-
-  class Behavior extends Referent
-    constructor: ->
-      super
-      @methods = {}
-
-    addMethod: (name, code, compiler) ->
-      @methods[name] = compiler(code).bind this
-      @methods[name].code = code
-      @methods[name].compiler = compiler
-
-    delMethod: (name) -> delete @methods[name]
-
-
-  class Relation extends Referent
-    constructor: ({@subj, @rel, @obj, @params}) ->
-      super
-      @db.registerRel this
-
-    relate: (subject, object, @params = {}) ->
-      new Relation
-        @rel = this
-        @sub = subject
-        @obj = object
-
-    toString: ->
-      "#{@subj.name} #{} #{@obj.name}"
-
-
   class Db
     constructor: (@namespace, @prefix = '$') ->
       @names = {}
@@ -67,7 +14,11 @@ module.exports = (makeId = -> nextId++) ->
         bySub: {}
         byRel: {}
         byObj: {}
+      @compilers = {}
       @initDb()
+
+    addCompiler: (name, factory) ->
+      @compilers[name] = factory
 
     registerRef: (ref) ->
       @o[ref.id] = ref
@@ -78,6 +29,10 @@ module.exports = (makeId = -> nextId++) ->
       @rel.byObj[rel.obj.id] = rel
 
     initDb: ->
+      @addCompiler 'coffeescript', ->
+        coffee = require 'coffee-script'
+        (code) -> coffee.eval code
+
       @create 'sys'
       @create 'root'
       @create 'behavior', Behavior
@@ -117,5 +72,7 @@ module.exports = (makeId = -> nextId++) ->
 
   return {
       Referent: Referent
+      Relation: Relation
+      Behavior: Behavior
       Db: Db
     }
