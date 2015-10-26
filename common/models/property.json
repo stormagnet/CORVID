@@ -14,13 +14,28 @@
       "type": "any",
       "required": true
     },
+    "definerId": {
+      "type": "string",
+      "required": true
+    },
     "referentId": {
       "type": "string",
       "required": true
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "definer": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "definerId"
+    },
+    "referent": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "referentId"
+    }
+  },
   "acls": [],
   "methods": {}
 }

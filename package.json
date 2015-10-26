@@ -1,6 +1,7 @@
 {
   "name": "engine",
   "version": "0.0.1",
+  "license": "MIT",
   "main": "server/server.js",
   "scripts": {
     "pretest": "jshint ."
