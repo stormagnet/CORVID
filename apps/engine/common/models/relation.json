@@ -1,0 +1,45 @@
+{
+  "name": "relation",
+  "base": "PersistedModel",
+  "strict": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "parameters": {
+      "type": "object"
+    },
+    "subjectId": {
+      "type": "string",
+      "index": true
+    },
+    "objectId": {
+      "type": "string",
+      "index": true
+    },
+    "relationshipId": {
+      "type": "string",
+      "index": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "subject": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "subjectId"
+    },
+    "object": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "objectId"
+    },
+    "relationship": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "relationshipId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

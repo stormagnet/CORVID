@@ -1,0 +1,31 @@
+{
+  "name": "behavior",
+  "base": "PersistedModel",
+  "strict": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "referentId": {
+      "type": "string",
+      "required": true,
+      "comments": "referent interface to this behavior"
+    },
+    "package": {
+      "type": "object",
+      "required": true,
+      "comments": ""
+    }
+  },
+  "relations": {
+    "referent": {
+      "model": "referent",
+      "type": "belongsTo",
+      "foreignKey": "referentId"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

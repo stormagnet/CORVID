@@ -1,0 +1,26 @@
+{
+  "name": "property",
+  "base": "PersistedModel",
+  "strict": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "any",
+      "required": true
+    },
+    "referentId": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

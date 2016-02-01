@@ -1,0 +1,13 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "localMongo": {
+    "host": "localhost",
+    "port": 27017,
+    "database": "corvid-engine",
+    "name": "localMongo",
+    "connector": "mongodb"
+  }
+}
