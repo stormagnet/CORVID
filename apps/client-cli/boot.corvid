@@ -1,0 +1,16 @@
+
+= Euclidic
+
+= Relation < Euclidic
+= IsA < Relation
+= Entity < Euclidic
+= Group < Euclidic
+= Role < Euclidic
+
+= Context < Euclidic
+= Spatial < Context
+= hasContext < Relation
+
+= placedOn
+> placedOn IsA Relation
+> placedOn hasContext Spatial
