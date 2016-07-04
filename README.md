@@ -10,4 +10,7 @@ The current goal is to have something other people can play with as easily as po
     $ node world/finch
     > 
 
+# About the AWS branch
 
+Working on an implementation of the Engine built from API Gateway Service,
+Lambda and DynamoDB. Initial proof of concept uses 'local dynamo'.
