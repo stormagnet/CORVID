@@ -15,6 +15,7 @@
     "loopback-connector-mongodb": "^1.13.0",
     "loopback-connector-oracle": "^2.2.0",
     "loopback-datasource-juggler": "^2.19.0",
+    "aws-sdk": "*",
     "serve-favicon": "^2.0.1"
   },
   "optionalDependencies": {
