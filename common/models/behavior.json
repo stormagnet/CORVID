@@ -13,9 +13,12 @@
     },
     "package": {
       "type": "object",
-      "required": true,
-      "comments": ""
-    }
+      "required": true
+    },
+    "name": {"type": "string", "required": true},
+    "parameters": {"type": "object", "default": {}},
+    "variables": {"type": "object", "default": {}},
+    "state": {"type": "object", "default": {}}
   },
   "relations": {
     "referent": {
