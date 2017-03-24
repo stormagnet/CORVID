@@ -6,16 +6,33 @@
     "validateUpsert": true
   },
   "properties": {
-    "id":   { "type": "number", "id": true, "generated": true },
-    "name": { "type": "string", "comments": "core for developer sanity" }
+    "name": {
+      "type": "String",
+      "comments": "core for developer sanity"
+    }
   },
   "validations": [],
   "relations": {
-    "behavior":     { "type": "hasOne",  "model": "behavior", "foreignKey": ""         },
-
-    "subjectOf":    { "type": "hasMany", "model": "relation", "foreignKey": "subject"  },
-    "objectOf":     { "type": "hasMany", "model": "relation", "foreignKey": "object"   },
-    "definitionOf": { "type": "hasMany", "model": "relation", "foreignKey": "relation" }
+    "behavior": {
+      "type": "hasOne",
+      "model": "behavior",
+      "foreignKey": ""
+    },
+    "subjectOf": {
+      "type": "hasMany",
+      "model": "relation",
+      "foreignKey": "subject"
+    },
+    "objectOf": {
+      "type": "hasMany",
+      "model": "relation",
+      "foreignKey": "object"
+    },
+    "definitionOf": {
+      "type": "hasMany",
+      "model": "relation",
+      "foreignKey": "relation"
+    }
   },
   "acls": [],
   "methods": {}

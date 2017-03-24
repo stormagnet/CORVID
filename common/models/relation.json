@@ -6,15 +6,28 @@
     "validateUpsert": true
   },
   "properties": {
-    "id":         { "type": "number", "id": true, "generated": true },
-
-    "parameters": { "type": "object", "default": {} }
+    "parameters": {
+      "type": "object",
+      "default": {}
+    }
   },
   "validations": [],
   "relations": {
-    "subject":  { "type": "hasOne", "model": "referent", "foreignKey": "" },
-    "object":   { "type": "hasOne", "model": "referent", "foreignKey": "" },
-    "relation": { "type": "hasOne", "model": "referent", "foreignKey": "" }
+    "subject": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "subject"
+    },
+    "object": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "object"
+    },
+    "relation": {
+      "type": "belongsTo",
+      "model": "referent",
+      "foreignKey": "relation"
+    }
   },
   "acls": [],
   "methods": {}

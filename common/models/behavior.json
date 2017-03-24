@@ -6,14 +6,26 @@
     "validateUpsert": true
   },
   "properties": {
-    "id":         { "type": "number", "id": true, "generated": true },
-
-    "package":    { "type": "object", "required": true },
-    "name":       { "type": "string", "required": true },
-
-    "parameters": { "type": "object", "default": {} },
-    "variables":  { "type": "object", "default": {} },
-    "state":      { "type": "object", "default": {} }
+    "package": {
+      "type": "object",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "parameters": {
+      "type": "object",
+      "default": {}
+    },
+    "variables": {
+      "type": "object",
+      "default": {}
+    },
+    "state": {
+      "type": "object",
+      "default": {}
+    }
   },
   "validations": [],
   "relations": {
