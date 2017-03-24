@@ -6,34 +6,22 @@
     "validateUpsert": true
   },
   "properties": {
-    "name": {
-      "type": "string",
-      "required": true
-    },
-    "value": {
-      "type": "any",
-      "required": true
-    },
-    "definerId": {
-      "type": "string",
-      "required": true
-    },
-    "referentId": {
-      "type": "string",
-      "required": true
-    }
+    "id":    { "type": "number", "id": true, "generated": true },
+
+    "name":  { "type": "string", "required": true },
+    "value": { "type": "object", "required": true }
   },
   "validations": [],
   "relations": {
-    "definer": {
+    "propOf": {
       "type": "belongsTo",
       "model": "referent",
-      "foreignKey": "definerId"
+      "foreignKey": ""
     },
-    "referent": {
+    "definedBy": {
       "type": "belongsTo",
       "model": "referent",
-      "foreignKey": "referentId"
+      "foreignKey": ""
     }
   },
   "acls": [],

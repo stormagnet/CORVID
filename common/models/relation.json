@@ -6,39 +6,15 @@
     "validateUpsert": true
   },
   "properties": {
-    "parameters": {
-      "type": "object"
-    },
-    "subjectId": {
-      "type": "string",
-      "index": true
-    },
-    "objectId": {
-      "type": "string",
-      "index": true
-    },
-    "relationshipId": {
-      "type": "string",
-      "index": true
-    }
+    "id":         { "type": "number", "id": true, "generated": true },
+
+    "parameters": { "type": "object", "default": {} }
   },
   "validations": [],
   "relations": {
-    "subject": {
-      "type": "belongsTo",
-      "model": "referent",
-      "foreignKey": "subjectId"
-    },
-    "object": {
-      "type": "belongsTo",
-      "model": "referent",
-      "foreignKey": "objectId"
-    },
-    "relationship": {
-      "type": "belongsTo",
-      "model": "referent",
-      "foreignKey": "relationshipId"
-    }
+    "subject":  { "type": "hasOne", "model": "referent", "foreignKey": "" },
+    "object":   { "type": "hasOne", "model": "referent", "foreignKey": "" },
+    "relation": { "type": "hasOne", "model": "referent", "foreignKey": "" }
   },
   "acls": [],
   "methods": {}

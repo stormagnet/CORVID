@@ -6,29 +6,23 @@
     "validateUpsert": true
   },
   "properties": {
-    "referentId": {
-      "type": "string",
-      "required": true,
-      "comments": "referent interface to this behavior"
-    },
-    "package": {
-      "type": "object",
-      "required": true
-    },
-    "name": {"type": "string", "required": true},
-    "parameters": {"type": "object", "default": {}},
-    "variables": {"type": "object", "default": {}},
-    "state": {"type": "object", "default": {}}
-  },
-  "relations": {
-    "referent": {
-      "model": "referent",
-      "type": "belongsTo",
-      "foreignKey": "referentId"
-    }
+    "id":         { "type": "number", "id": true, "generated": true },
+
+    "package":    { "type": "object", "required": true },
+    "name":       { "type": "string", "required": true },
+
+    "parameters": { "type": "object", "default": {} },
+    "variables":  { "type": "object", "default": {} },
+    "state":      { "type": "object", "default": {} }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "behavesFor": {
+      "type": "hasOne",
+      "model": "referent",
+      "foreignKey": ""
+    }
+  },
   "acls": [],
   "methods": {}
 }

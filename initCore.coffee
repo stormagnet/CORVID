@@ -2,31 +2,45 @@ app = require './server/server'
 
 coreTree =
   euclidic:
-    engine: {}
+    engine: ->
     entity:
-      actor: {}
-      group: {}
+      actor: ->
+      group: ->
     relation:
-      instanceOf: {}
-      subsetOf: {}
+      instanceOf: ->
+      subsetOf: ->
+      has: ->
+      does: ->
     change:
-      morph: {}
-      associate: {}
-      dissociate: {}
-      manifest: {}
-      destroy: {}
-    dimension: {}
+      manifest: ->
+      associate: ->
+      morph: ->
+      dissociate: ->
+      destroy: ->
+    dimension: ->
 
 loadTree = (src, dest) ->
+  todo = []
+
   for k, v of src
+    console.log k
+
     app.models.Referent.findOrCreate name: k
       .then (ref) ->
         dest[k] = ref
-        loadTree v, ref
+
+        if 'function' is typeof v
+          todo.push v
+        else
+          loadTree v, ref
+
+  todo.forEach (item) -> item()
 
 core = {}
 
 loadTree coreTree, core
+
+console.log "created core"
 
 relate = (subj, rel, obj) ->
   subj = app.models.Referent.findOrCreate name: subj
@@ -49,3 +63,5 @@ relations = """
 """
 
 relate rel.trim().split ' ' for rel in relations.split '\n'
+
+console.log "created relations"
