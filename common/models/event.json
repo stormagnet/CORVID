@@ -1,0 +1,32 @@
+{
+  "name": "event",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "triggerTime": {
+      "type": "date",
+      "required": true
+    },
+    "resolvedTime": {
+      "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "eventRelation": {
+      "type": "belongsTo",
+      "model": "relation",
+      "foreignKey": ""
+    },
+    "changes": {
+      "type": "hasMany",
+      "model": "change",
+      "foreignKey": "event"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

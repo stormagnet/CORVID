@@ -1,67 +1,46 @@
 app = require './server/server'
 
-coreTree =
-  euclidic:
-    engine: ->
-    entity:
-      actor: ->
-      group: ->
-    relation:
-      instanceOf: ->
-      subsetOf: ->
-      has: ->
-      does: ->
-    change:
-      manifest: ->
-      associate: ->
-      morph: ->
-      dissociate: ->
-      destroy: ->
-    dimension: ->
+{core, makeRef, relate} = require './lib/core-builder'
 
-loadTree = (src, dest) ->
-  todo = []
+depMan = new (require './lib/dependency-manager') 'loading', 'finished'
 
-  for k, v of src
-    console.log k
+real = { makeRef, relate }
+chain = Promise.resolve()
 
-    app.models.Referent.findOrCreate name: k
-      .then (ref) ->
-        dest[k] = ref
+nameOf = (o) -> if 'string' is typeof o then o else o.name
 
-        if 'function' is typeof v
-          todo.push v
-        else
-          loadTree v, ref
+relate = (subject, relation, object) ->
+  relation = nameOf relation
+  subject  = nameOf subject
+  object   = nameOf object
 
-  todo.forEach (item) -> item()
+  waitFor null, 'loading', 'Relation', subject, relation, object, ->
+    real.relate core[subject], core[relation], core[object]
 
-core = {}
+loadReferent = (path) ->
+  chain.then ->
+    name = waiting = false
 
-loadTree coreTree, core
+    waitFor = (name, stage, deps..., andThen) ->
+      waiting = true
+      depMan.waitFor name, stage, deps, andThen
+
+    makeRef = (refName) ->
+      real.MakeRef refName
+        .then (created) ->
+          name = refName
+          created
+
+    Promise.resolve require(path) {app, core, waitFor, makeRef, relate}
+      .then (created) ->
+        if name and not waiting
+          depMan.markDone name
+
+
+(require './core') {loadReferent, app, makeRef, core, relate}
+
+chain
+  .then -> depMan.tryToFinish()
+  .catch (e) -> console.log "Error while loading core:", e
 
 console.log "created core"
-
-relate = (subj, rel, obj) ->
-  subj = app.models.Referent.findOrCreate name: subj
-  rel  = app.models.Referent.findOrCreate name: rel
-  obj  = app.models.Referent.findOrCreate name: obj
-
-  app.models.Relation.findOrCreate
-    subjectId:      subj.id
-    relationshipId: rel.id
-    objectId:       obj.id
-
-relations = """
-  instanceOf  instanceOf  relation
-  relation    instanceOf  euclidic
-  engine      instanceOf  euclidic
-  subsetOf    instanceOf  relation
-  entity      instanceOf  euclidic
-  actor       instanceOf  entity
-  group       instanceOf  entity
-"""
-
-relate rel.trim().split ' ' for rel in relations.split '\n'
-
-console.log "created relations"

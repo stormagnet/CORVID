@@ -17,7 +17,6 @@
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^4.0.0",
     "loopback-connector-mongodb": "^1.13.0",
-    "loopback-connector-oracle": "^2.2.0",
     "loopback-datasource-juggler": "^2.19.0",
     "strong-error-handler": "^1.0.1",
     "serve-favicon": "^2.0.1"

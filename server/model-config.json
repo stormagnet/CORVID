@@ -55,5 +55,13 @@
     "public": true,
     "$promise": {},
     "$resolved": true
+  },
+  "event": {
+    "dataSource": "localMongo",
+    "public": true
+  },
+  "change": {
+    "dataSource": "localMongo",
+    "public": true
   }
 }

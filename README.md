@@ -11,3 +11,20 @@ The current goal is to have something other people can play with as easily as po
     > 
 
 
+# SOME NOTES - ignore
+
+```coffeescript
+
+    relations = """
+      instanceOf  instanceOf  relation
+      relation    instanceOf  euclidic
+      engine      instanceOf  euclidic
+      subsetOf    instanceOf  relation
+      entity      instanceOf  euclidic
+      actor       instanceOf  entity
+      group       instanceOf  entity
+    """
+
+    relate rel.trim().split ' ' for rel in relations.split '\n'
+
+```

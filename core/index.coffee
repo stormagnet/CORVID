@@ -1,4 +1,4 @@
-module.exports = ({app, waitFor, core, makeRef, relate}) ->
+module.exports = ({app, makeRef, core, relate, loadReferent}) ->
   referents = [
     "./euclidic/change/associate"
     "./euclidic/change/destroy"
@@ -19,5 +19,5 @@ module.exports = ({app, waitFor, core, makeRef, relate}) ->
     "./euclidic"
   ]
 
-  for ref in referents
-    require(ref) {app, waitFor, core, makeRef, relate}
+  loadReferent r for r in referents
+
