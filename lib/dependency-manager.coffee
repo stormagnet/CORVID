@@ -1,3 +1,5 @@
+util = require 'util'
+
 module.exports =
   class DependencyManager
     constructor: (@stages...) ->
@@ -11,9 +13,12 @@ module.exports =
 
     _initStage: (stage) -> stage[s] = {} for s in @stages
 
-    markDone: (name) -> @stage[s][name] = true for s in @stages
+    markDone: (name) ->
+      console.log "#{name} finished without waiting."
+      @stage[s][name] = true for s in @stages
 
-    waitFor: (name, stage = @lastStage, deps..., andThen) ->
+    waitFor: (name, stage = @lastStage, deps, andThen) ->
+      console.log "Registering waiter #{name}@#{stage}: #{deps.join ", "}"
       @waiting[stage][name] = { name, deps, andThen }
 
       @checkProgress name
@@ -33,8 +38,8 @@ module.exports =
       for intermediateStage in @stages
         break if intermediateStage is stage
 
-        if not (deps = @waiting[name][intermediateStage].deps)?.filter
-          throw new Error "Dependency format error for dependent #{name}, stage #{stage}: ", deps
+        if not (deps = @waiting[name][intermediateStage]?.deps)?.filter
+          throw new Error util.format "Dependency format error for dependent #{name}, stage #{stage}: ", @waiting[name]
 
         totalPending += (
           @waiting[name][intermediateStage].deps =
@@ -47,7 +52,7 @@ module.exports =
         @checkProgress name, nextStage
         return true
 
-    tryToFinish: (waiting = Object.getOwnPropertyNames @waiting) ->
+    tryToFinish: (waiting = Object.getOwnPropertyNames @waiting[@lastStage]) ->
       stillWaiting = waiting.filter (name) => not @checkProgress name
 
       if not stillWaiting

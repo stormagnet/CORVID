@@ -5,7 +5,6 @@ app = require './server/server'
 depMan = new (require './lib/dependency-manager') 'loading', 'finished'
 
 real = { makeRef, relate }
-chain = Promise.resolve()
 
 nameOf = (o) -> if 'string' is typeof o then o else o.name
 
@@ -17,30 +16,28 @@ relate = (subject, relation, object) ->
   waitFor null, 'loading', 'Relation', subject, relation, object, ->
     real.relate core[subject], core[relation], core[object]
 
-loadReferent = (path) ->
-  chain.then ->
-    name = waiting = false
+{serialize, serializeNoStop } = require './lib/serialize.coffee'
 
-    waitFor = (name, stage, deps..., andThen) ->
-      waiting = true
-      depMan.waitFor name, stage, deps, andThen
+loadReferent = serialize (path) ->
+  name = waiting = false
 
-    makeRef = (refName) ->
-      real.MakeRef refName
-        .then (created) ->
-          name = refName
-          created
+  waitFor = (name, stage, deps..., andThen) ->
+    waiting = true
+    console.log "#{name}@#{stage} is waiting for #{deps.join ", "}"
+    depMan.waitFor name, stage, deps, andThen
 
-    Promise.resolve require(path) {app, core, waitFor, makeRef, relate}
-      .then (created) ->
-        if name and not waiting
-          depMan.markDone name
+  makeRef = (refName) ->
+    name = refName
+    real.MakeRef refName
 
+  Promise.resolve require(path) {app, core, waitFor, makeRef, relate}
+    .then (created) ->
+      if name and not waiting
+        depMan.markDone name
 
-(require './core') {loadReferent, app, makeRef, core, relate}
+(require './core') {loadReferent, app, core}
 
-chain
+loadReferent.chain
   .then -> depMan.tryToFinish()
   .catch (e) -> console.log "Error while loading core:", e
-
-console.log "created core"
+  .then -> console.log "created core"

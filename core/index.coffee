@@ -1,4 +1,4 @@
-module.exports = ({app, makeRef, core, relate, loadReferent}) ->
+module.exports = ({loadReferent}) ->
   referents = [
     "./euclidic/change/associate"
     "./euclidic/change/destroy"
