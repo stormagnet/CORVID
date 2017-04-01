@@ -1,6 +1,21 @@
 util = require 'util'
 
 module.exports = (client) ->
+  class JanusEntity
+    constructor: (@client) ->
+
+  class Graph extends JanusEntity
+    constructor: (client) ->
+      super client
+
+    V: (selector) ->
+      (
+      if selector
+        @client.post "g.V(%j)", selector
+      else
+        @client.post "g.V()"
+      ).then (vectors) -> @wrapVectors vectors
+
   class QueryBuilder
     @parameters: Object.assign {},
       ("addV addE as from to hasKey".split(' ').map (f) -> "#{f}": 1)...
