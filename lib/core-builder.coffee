@@ -1,19 +1,22 @@
-app = require '../server/server'
 
 module.exports =
-  core: core = {}
+  class Engine
+    constructor: (@settings = {}) ->
+      @_tp = (require './tinker-pop.coffee')
+      @core = null
 
-  makeRef: makeRef = (name) ->
-    core[name] = app.models.Referent.findOrCreate {name}
+    start: ->
+      @tp.init()
+      @core = @tp.core()
 
-  relate: (subj, rel, obj) ->
-    subj = makeRef name: subj
-    rel  = makeRef name: rel
-    obj  = makeRef name: obj
+    makeRef: makeRef = (name) ->
+      @core.findOrAddVertex {name}
 
-    app.models.Relation.findOrCreate
-      subjectId:      subj.id
-      relationshipId: rel.id
-      objectId:       obj.id
+    relate: (subject, relation, object) ->
+      subject  = makeRef name: subject
+      relation = makeRef name: relation
+      object   = makeRef name: object
+
+      @core.relate {subject, relation, object}
 
 

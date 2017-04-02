@@ -1,33 +1,18 @@
 {
-  "name": "engine",
+  "name": "corvid-engine",
   "version": "0.0.1",
   "license": "MIT",
-  "main": "server/server.js",
+  "main": "lib/index.coffee",
   "scripts": {
-    "lint": "eslint .",
     "start": "node .",
     "pretest": "jshint .",
     "posttest": "npm run lint && nsp check"
   },
   "dependencies": {
-    "compression": "^1.0.3",
-    "cors": "^2.5.2",
-    "gremlin": "^2.3.3",
-    "helmet": "^1.3.0",
-    "loopback": "^3.0.0",
-    "loopback-boot": "^2.6.5",
-    "loopback-component-explorer": "^4.0.0",
-    "loopback-connector-mongodb": "^1.13.0",
-    "loopback-datasource-juggler": "^2.19.0",
-    "node-rest-client": "^3.1.0",
-    "serve-favicon": "^2.0.1",
-    "strong-error-handler": "^1.0.1"
+    "coffee-script": "^1.12.4",
+    "gremlin": "^2.3.3"
   },
   "devDependencies": {
-    "eslint": "^2.13.1",
-    "eslint-config-loopback": "^4.0.0",
-    "jshint": "^2.5.6",
-    "nsp": "^2.1.0"
   },
   "repository": {
     "type": "",

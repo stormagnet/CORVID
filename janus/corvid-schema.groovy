@@ -7,25 +7,24 @@
  * ==>true
  * gremlin> t = JanusGraphFactory.open('conf/janusgraph-cassandra-es.properties')
  * ==>standardjanusgraph[cassandrathrift:[127.0.0.1]]
- * gremlin> defineGratefulDeadSchema(t)
+ * gremlin> defineCORVIDSchema(t)
  * ==>null
  * gremlin> t.close()
  * ==>null
  * gremlin>
  */
 
-def defineGratefulDeadSchema(janusGraph) {
+def defineCORVIDSchema(janusGraph) {
     m = janusGraph.openManagement()
 
     // vertex labels
     referant  = m.makeVertexLabel("referant").make()
     relation  = m.makeVertexLabel("relation").make()
     event     = m.makeVertexLabel("event").make()
+    change    = m.makeVertexLabel("change").make()
 
     // edge labels
     reference = m.makeEdgeLabel("reference").make()
-    transform = m.makeEdgeLabel("transform").make()
-    change    = m.makeEdgeLabel("change").make()
 
     // vertex and edge properties
     //   referant
