@@ -1,3 +1,8 @@
+class EventMatcher
+  constructor: ->
+
+  eventInterestsMe: (event) -> true
+
 class Parameter
   constructor: ({@name, @default}) ->
 
@@ -18,7 +23,6 @@ class Variable
   _named_object_context_init: ->
     contextRef = @_db?.lookup @context.objectName
     ({args}) => @value = contextRef._getContextData @
-
 
 module.exports = (Behavior) ->
   Behavior._hookStateSym = Symbol 'behavior hook state'
