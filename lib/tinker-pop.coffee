@@ -4,21 +4,7 @@ util = require 'util'
 
 {createClient, bindForClient} = require 'gremlin'
 
-class BetterClient
-  constructor: (opts...) ->
-    @client = createClient opts...
-
-  post: (q, values...) ->
-    q = util.format q, values...
-    console.log "Submitting query", q
-
-    new Promise (resolve, reject) =>
-      @client.execute q, (e, r) ->
-        if e then reject e else resolve r
-
-client = new BetterClient
-
-{Vertex, Property} = (require 'janus-classes') client
+{Vertex, Property} = require 'janus-classes'
 
 module.exports =
   p: p = (promise) ->
