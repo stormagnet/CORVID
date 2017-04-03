@@ -4,7 +4,7 @@ util = require 'util'
 
 {createClient, bindForClient} = require 'gremlin'
 
-{Vertex, Property} = require 'janus-classes'
+{Vertex, Property} = require 'gremlin-classes'
 
 module.exports =
   p: p = (promise) ->
@@ -15,11 +15,11 @@ module.exports =
   englishList: englishList = (l, conjunction) ->
     [first..., last] = l
 
-    (switch l.length
-      when 0 then []
-      when 1 then [l[0]]
-      when 2 then [l[0], conjunction, last]
-      else        [first.join(", "), conjunction, last]
+    ( switch l.length
+        when 0 then []
+        when 1 then [l[0]]
+        when 2 then [l[0], conjunction, last]
+        else        [first.join(", "), conjunction, last]
     ).join " "
 
   expectOneOf: expectOneOf = (value, types...) ->
@@ -32,6 +32,7 @@ module.exports =
         throw new TypeError "Wanted string, got #{t}"
 
   client: client
+
   makeQuery: makeQuery = (queryTemplate, staticValues...) ->
     if staticValues.length
       queryTemplate = util.format queryTemplate, staticValues...

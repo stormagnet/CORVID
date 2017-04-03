@@ -119,16 +119,14 @@ class Vertex
       .then (prop) ->
         @props[name] = new Property name, prop
 
-  connectTo: (other) ->
-    new Edge @, to
+  connectTo: (other, label) ->
+    new Edge @, other
 
   query: ->
     new QueryBuilder
       .fn V: @id
 
 class Edge extends Vertex
-  constructor: (from, to, props = {}) ->
-    from.query
-      .fn as: 'a'
+  constructor: (from, to, label) ->
 
 module.exports = {Vertex, Property, QueryBuilder, Edge, client}
