@@ -1,0 +1,7 @@
+- flow chart of event life cycle
+- wiki cleanup
+ - better indexing because the sidebar is useless
+ - meta page about wiki management (page health and such)
+ - script to automate meta page
+- tests
+- Grand Design Document
