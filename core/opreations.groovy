@@ -33,7 +33,7 @@ class Core {
     namesAndParents
       .keySet()
       .map { name ->
-        o = new Euclid name
+        o = new Euclidic name
 
         if (parent = resolveReference namesAndParents[name]) {
           o.setParent parent
