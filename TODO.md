@@ -1,7 +1,8 @@
-- flow chart of event life cycle
+- stormagnet
+ - flow chart (or swim lanes?) of event life cycle
+ - Grand Design
 - wiki cleanup
  - better indexing because the sidebar is useless
  - meta page about wiki management (page health and such)
  - script to automate meta page
 - tests
-- Grand Design Document
