@@ -5,28 +5,12 @@ Specific actions defined in build/actions/
 ###
 
 runOnce = (name, fn) -> return runOnce.alreadyRan[name] ?= fn()
-
 runOnce.alreadyRan = {}
 
 fs   = require 'fs'
 path = require 'path'
 
 actionDir = path.resolve __dirname, 'build', 'actions'
-
-loopCheck = (action, seen = []) ->
-  if action in seen
-    seen = [seen..., action]
-
-    loopStr = seen.join " -> "
-
-    throw new Error "dependency loop: #{loopStr}"
-
-  seen = [seen..., action]
-
-  for depency from dependencies[action]
-    loopCheck dependency, seen
-
-  return
 
 for dir in ['lib', 'src']
   module.paths.push path.resolve __dirname, dir
