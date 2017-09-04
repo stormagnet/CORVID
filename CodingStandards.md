@@ -17,11 +17,25 @@
   - development scripts
  - src/
   - code to be "built" to produce the artifacts
+  - 
  - test/
   - tests and test configuration information, if any
 
 - code
  - see EditorConfig
+
+- modules
+ - Never over-write module.exports
+ - Always modify its members
+ - A module which exports one class should do something like:
+
+```coffee
+    class exports.Example
+      constructor: (info) ->
+        { @foo
+          @bar
+        } = info
+```
 
 ## Tools
 

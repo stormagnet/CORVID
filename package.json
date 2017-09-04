@@ -23,6 +23,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "joe": "^2.0.2",
-    "joe-reporter-compact": "^0.1.4"
+    "joe-reporter-console": "^2.0.1",
+    "mocha": "^3.5.0"
   }
 }
